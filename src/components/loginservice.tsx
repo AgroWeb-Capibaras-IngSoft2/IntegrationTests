@@ -1,76 +1,130 @@
-
+// src/components/Login.tsx
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import bgImage from '../assets/paisaje_login.jpg';
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // Aquí llamarías tu servicio de autenticación, por ejemplo:
-    // authService.login({ email, password }).then(...)
-    console.log('Login:', { email, password });
-  };
-
-  const handleCreateAccount = () => {
-    // Navega al formulario de registro
-    navigate('/signup');
+    console.log('Login:', { email, password, remember });
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-green-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">
-          Iniciar Sesión en AgroWeb
-        </h2>
+    <div className="h-screen flex overflow-hidden">
+      {/* IZQUIERDA: 2/3 del ancho, 100% de la altura de la pantalla, sin scroll */}
+      <div className="hidden lg:block lg:w-2/3 h-full">
+        <img
+          src={bgImage}
+          alt="paisaje de login"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-        <label className="block mb-4">
-          <span className="text-gray-700">Correo electrónico</span>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            className="mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            placeholder="tucorreo@ejemplo.com"
-          />
-        </label>
+      {/* DERECHA: 1/3 del ancho, scroll interno si el contenido desborda */}
+      <div className="w-full lg:w-1/3 overflow-auto">
+        <div className="min-h-screen flex items-center justify-center p-8">
+          <div className="w-full bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-8">
+            <h1 className="text-3xl font-bold text-green-700 mb-4">AgroWeb</h1>
+            <h2 className="text-2xl font-semibold mb-8">¡Bienvenido de vuelta!</h2>
 
-        <label className="block mb-6">
-          <span className="text-gray-700">Contraseña</span>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            className="mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            placeholder="Tu contraseña"
-          />
-        </label>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email */}
+              <div>
+                <label className="block text-gray-700 mb-1">
+                  Correo electrónico
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="Escribe tu correo electrónico"
+                />
+              </div>
 
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
-        >
-          Iniciar Sesión
-        </button>
+              {/* Contraseña */}
+              <div>
+                <label className="block text-gray-700 mb-1">
+                  Contraseña
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="Escribe tu contraseña"
+                />
+              </div>
 
-        <p className="mt-4 text-center text-gray-600">
-          ¿No tienes cuenta?{' '}
-          <button
-            type="button"
-            onClick={handleCreateAccount}
-            className="text-green-600 hover:underline"
-          >
-            Crear cuenta
-          </button>
-        </p>
-      </form>
+              {/* Recordarme + Olvidaste */}
+              <div className="flex items-center justify-between">
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={e => setRemember(e.target.checked)}
+                    className="form-checkbox h-5 w-5 text-green-600"
+                  />
+                  <span className="ml-2 text-gray-700">Recuérdame</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => navigate('/forgot-password')}
+                  className="text-sm text-green-600 hover:underline"
+                >
+                  Olvidaste tu contraseña?
+                </button>
+              </div>
+
+              {/* Botón Entrar */}
+              <button
+                type="submit"
+                className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
+              >
+                Entrar
+              </button>
+            </form>
+
+            {/* Redes sociales */}
+            <div className="mt-6 flex space-x-4">
+              <button className="flex-1 flex items-center justify-center py-2 border rounded-lg hover:bg-gray-100 transition">
+                Facebook
+              </button>
+              <button className="flex-1 flex items-center justify-center py-2 border rounded-lg hover:bg-gray-100 transition">
+                Google
+              </button>
+            </div>
+
+            {/* Registro + Términos */}
+            <p className="mt-8 text-center text-gray-600">
+              ¿No tienes cuenta?{' '}
+              <button
+                onClick={() => navigate('/signup')}
+                className="text-green-600 font-medium hover:underline"
+              >
+                Regístrate
+              </button>
+            </p>
+            <p className="mt-2 text-center text-xs text-gray-500">
+              Al registrarte estás de acuerdo con los{' '}
+              <a href="/terms" className="text-green-600 hover:underline">
+                Términos de servicio
+              </a>{' '}
+              y la{' '}
+              <a href="/privacy" className="text-green-600 hover:underline">
+                Política de privacidad
+              </a>.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
