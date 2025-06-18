@@ -28,9 +28,9 @@ export default function Login() {
       </div>
 
       {/* DERECHA: 1/2 ancho en lg, scroll si es necesario */}
-      <div className="w-full lg:w-1/2 overflow-auto">
-        <div className="min-h-screen flex items-center justify-center p-8">
-          <div className="w-full max-w-lg bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center overflow-hidden">
+        <div className="flex items-center justify-center py-4">
+          <div className="w-full max-w-xl bg-white rounded-lg shadow-lg p-6 mx-4 sm:mx-8">
             <h1 className="text-3xl font-bold text-green-700 mb-4">AgroWeb</h1>
             <h2 className="text-2xl font-semibold mb-8">¡Bienvenido de vuelta!</h2>
 
