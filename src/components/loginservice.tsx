@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bgImage from '../assets/paisaje_login.jpg';
+import bcrypt from 'bcryptjs';
 
 export default function Login() {
   const navigate = useNavigate();

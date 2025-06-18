@@ -65,7 +65,7 @@ const Registro = () => {
         typeDocument: formData.tipoDocumento,
         numberDocument: formData.numeroDocumento,
         phoneNumber: formData.telefono,
-        hashPassword: bcrypt.hashSync(formData.contrasena, 10),
+        hashPassword: formData.contrasena,
         username: formData.nombreUsuario
       })
     });
@@ -74,6 +74,7 @@ const Registro = () => {
       const data = await response.json();
       alert('¡Registro exitoso!');
       console.log('Respuesta del servidor:', data);
+      navigate('/');
     } else {
       const errorData = await response.json();
       alert('Error en el registro: ' + (errorData.error || response.statusText));
