@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import farmImg from '/src/assets/farm.png';
+import bcrypt from 'bcryptjs';
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Registro = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.contrasena !== formData.repetirContrasena) {
       alert('Las contraseñas no coinciden.');
@@ -43,8 +44,63 @@ const Registro = () => {
       alert('Debes aceptar los términos y condiciones.');
       return;
     }
-    console.log('Datos registrados:', formData);
-    alert('¡Registro exitoso!');
+    const json_data = {
+      firstName: formData.nombre,
+      middleName: formData.segundoNombre,
+      surName1: formData.apellido1,
+      surName2: formData.apellido2,
+      bornDate: formData.fechaNacimiento,
+      department: formData.departamento,
+      municipality: formData.municipio,
+      trail: formData.ruta,
+      email: formData.correo,
+      typeDocument: formData.tipoDocumento,
+      numberDocument: formData.numeroDocumento,
+      phoneNumber: formData.telefono,
+      hashPassword: bcrypt.hashSync(formData.contrasena, 10),
+      username: formData.nombreUsuario
+    };
+
+    console.log('Datos a enviar:', JSON.stringify(json_data));
+
+  try {
+    const response = await fetch('http://localhost:5001/users/register', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName: formData.nombre,
+        middleName: formData.segundoNombre,
+        surName1: formData.apellido1,
+        surName2: formData.apellido2,
+        bornDate: formData.fechaNacimiento,
+        department: formData.departamento,
+        municipality: formData.municipio,
+        trail: formData.ruta,
+        email: formData.correo,
+        typeDocument: formData.tipoDocumento,
+        numberDocument: formData.numeroDocumento,
+        phoneNumber: formData.telefono,
+        hashPassword: bcrypt.hashSync(formData.contrasena, 10),
+        username: formData.nombreUsuario
+      })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      alert('¡Registro exitoso!');
+      console.log('Respuesta del servidor:', data);
+    } else {
+      const errorData = await response.json();
+      alert('Error en el registro: ' + (errorData.error || response.statusText));
+    }
+  } catch (error) {
+    alert('Error de red: ' + error.message);
+  }
+
+
   };
 
   const handleIrAlLogin = () => {
