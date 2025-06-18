@@ -28,7 +28,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       <Tabs
         selectedKey={selectedCategory}
         onSelectionChange={(key) => onSelectCategory(key as string)}
-        color="primary"
+        color="success"
         variant="light"
         classNames={{
           base: "overflow-x-auto",
