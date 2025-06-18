@@ -1,7 +1,7 @@
 // src/App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './components/loginservice'   // <-- Asegúrate de que la ruta coincida
-import Register from './components/Register'; // ruta correcta según tu estructura
+import Register from './components/registrationservice'; // ruta correcta según tu estructura
 
 export default function App() {
   return (
