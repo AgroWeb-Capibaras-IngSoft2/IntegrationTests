@@ -41,7 +41,7 @@ const Registro = () => {
             campo a tu mesa</h2>
 
           <img
-            src="/images/farm.png"
+            src="/assets/farm.png"
             alt="Granja"
             className="img-fluid border rounded"
             style={{ width: '500px', height: 'auto' }} 
