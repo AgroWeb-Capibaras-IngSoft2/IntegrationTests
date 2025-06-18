@@ -1,28 +1,35 @@
-// src/components/registrationservice.tsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import farmImg from '../assets/farm.png';
 
-const Registro: React.FC = () => {
-  const navigate = useNavigate();
+const Registro = () => {
   const [formData, setFormData] = useState({
     nombre: '',
+    segundoNombre: '',
+    apellido1: '',
+    apellido2: '',
+    fechaNacimiento: '',
+    departamento: '',
+    municipio: '',
+    ruta: '',
     correo: '',
+    tipoDocumento: '',
+    numeroDocumento: '',
+    telefono: '',
     contrasena: '',
     repetirContrasena: '',
+    nombreUsuario: '',
     aceptoTerminos: false
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [name]: type === 'checkbox' ? checked : value
-    }));
+    });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.contrasena !== formData.repetirContrasena) {
       alert('Las contraseñas no coinciden.');
@@ -34,87 +41,63 @@ const Registro: React.FC = () => {
     }
     console.log('Datos registrados:', formData);
     alert('¡Registro exitoso!');
-    navigate('/'); // opcional: vuelve al login tras registrarse
   };
 
   return (
     <div className="container mt-5">
       <div className="row align-items-center">
-        {/* Imagen y mensaje */}
-        <div className="col-md-6 text-center mb-4 mb-md-0">
-          <h2>Productos frescos del campo a tu mesa</h2>
+        <div className="col-md-6">
+          <h2 className="text-center">Productos frescos del campo a tu mesa</h2>
           <img
-            src={farmImg}
+            src="/assets/farm.png"
             alt="Granja"
-            className="img-fluid border rounded mt-3"
-            style={{ maxWidth: '100%', height: 'auto' }}
+            className="img-fluid border rounded"
+            style={{ width: '500px', height: 'auto' }}
           />
         </div>
 
-        {/* Formulario de registro */}
         <div className="col-md-6">
           <h3 className="fw-bold mb-3">Crear una cuenta</h3>
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="form-label">Nombre y apellido</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Ej. Rodolfo Rivera"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            {[
+              { label: 'Nombre', name: 'nombre' },
+              { label: 'Segundo nombre', name: 'segundoNombre' },
+              { label: 'Primer apellido', name: 'apellido1' },
+              { label: 'Segundo apellido', name: 'apellido2' },
+              { label: 'Fecha de nacimiento', name: 'fechaNacimiento', type: 'date' },
+              { label: 'Departamento', name: 'departamento' },
+              { label: 'Municipio', name: 'municipio' },
+              { label: 'Ruta', name: 'ruta' },
+              { label: 'Correo electrónico', name: 'correo', type: 'email' },
+              { label: 'Tipo de documento', name: 'tipoDocumento' },
+              { label: 'Número de documento', name: 'numeroDocumento' },
+              { label: 'Número de teléfono', name: 'telefono' },
+              { label: 'Nombre de usuario', name: 'nombreUsuario' },
+              { label: 'Contraseña', name: 'contrasena', type: 'password' },
+              { label: 'Repetir contraseña', name: 'repetirContrasena', type: 'password' }
+            ].map(({ label, name, type = 'text' }) => (
+              <div className="mb-3" key={name}>
+                <label className="form-label">{label}</label>
+                <input
+                  type={type}
+                  className="form-control"
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
 
-            <div className="mb-3">
-              <label className="form-label">Correo electrónico</label>
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Ej. hey@rodolforivera.co"
-                name="correo"
-                value={formData.correo}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Contraseña</label>
-              <input
-                type="password"
-                className="form-control"
-                name="contrasena"
-                value={formData.contrasena}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Repetir contraseña</label>
-              <input
-                type="password"
-                className="form-control"
-                name="repetirContrasena"
-                value={formData.repetirContrasena}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-check mb-4">
+            <div className="form-check mb-3">
               <input
                 className="form-check-input"
                 type="checkbox"
                 name="aceptoTerminos"
                 checked={formData.aceptoTerminos}
                 onChange={handleChange}
-                id="aceptoTerminos"
               />
-              <label className="form-check-label" htmlFor="aceptoTerminos">
+              <label className="form-check-label">
                 Acepto los <a href="#">términos y condiciones</a> de servicio
               </label>
             </div>
@@ -123,11 +106,7 @@ const Registro: React.FC = () => {
               <button type="submit" className="btn btn-success">
                 Registrarme
               </button>
-              <button
-                type="button"
-                className="btn btn-outline-success"
-                onClick={() => navigate('/')}
-              >
+              <button type="button" className="btn btn-outline-success">
                 Ya tengo cuenta
               </button>
             </div>
