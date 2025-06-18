@@ -1,4 +1,3 @@
-// src/components/Login.tsx
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bgImage from '../assets/paisaje_login.jpg';
@@ -9,11 +8,34 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('Login:', { email, password, remember });
-    // aquí tu lógica de login...
+    setError(null);
+
+    try {
+      const response = await fetch('http://127.0.0.1:5001/users/autenticate/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          hashPassword: password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigate('/catalog'); // Redirect to catalog after successful login
+        // You can store user info/token here if needed
+        // navigate('/dashboard'); // Uncomment if you have a dashboard route
+      } else {
+        setError(data.error || 'Error de autenticación');
+      }
+    } catch (err) {
+      setError('No se pudo conectar con el servidor');
+    }
   };
 
   return (
@@ -73,7 +95,12 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Recordarme + Olvidaste */}
+              {/* Error message */}
+              {error && (
+                <div className="text-red-600 text-sm">{error}</div>
+              )}
+
+              {/* Remember me and forgot password */}
               <div className="flex items-center justify-between">
                 <label className="inline-flex items-center">
                   <input
@@ -93,7 +120,7 @@ export default function Login() {
                 </button>
               </div>
 
-              {/* Botón Entrar */}
+              {/* Entrar button */}
               <button
                 type="submit"
                 className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
@@ -111,7 +138,7 @@ export default function Login() {
               </button>
             </form>
 
-            {/* Redes sociales */}
+            {/* Social login buttons */}
             <div className="mt-6 flex space-x-4">
               <button className="flex-1 flex items-center justify-center py-2 border rounded-lg bg-white text-black hover:bg-gray-100 transition">
                 Facebook
