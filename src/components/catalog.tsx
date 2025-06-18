@@ -261,10 +261,12 @@ export default function Catalog() {
               icon="lucide:search-x"
               className="text-4xl text-gray-400 mb-4"
             />
-            <h3 className="text-xl font-medium">No products found</h3>
+            <h3 className="text-xl font-medium">
+              No hay productos encontrados
+            </h3>
             <p className="text-gray-500 mt-2 text-center">
-              Try adjusting your search or filter to find what you're looking
-              for.
+              Intenta ajustar tu búsqueda o filtro para encontrar lo que estás
+              buscando.
             </p>
             <button
               className="mt-4 px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
@@ -273,7 +275,7 @@ export default function Catalog() {
                 setSelectedCategory("all");
               }}
             >
-              Clear filters
+              Limpiar filtros
             </button>
           </div>
         )}
