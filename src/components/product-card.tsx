@@ -19,7 +19,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     >
       <div className="relative">
         <img
-          src={product.image}
+          src={product.imageUrl}
           alt={product.name}
           className="w-full aspect-square object-cover"
         />

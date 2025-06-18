@@ -1,4 +1,3 @@
-// src/components/Login.tsx
 import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bgImage from '../assets/paisaje_login.jpg';
@@ -8,14 +7,39 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('Login:', { email, password, remember });
+    setError(null);
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/users/autenticate/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          hashPassword: password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigate('/catalog'); // Redirect to catalog after successful login
+        // You can store user info/token here if needed
+        // navigate('/dashboard'); // Uncomment if you have a dashboard route
+      } else {
+        setError(data.error || 'Error de autenticación');
+      }
+    } catch (err) {
+      setError('No se pudo conectar con el servidor');
+    }
   };
 
   return (
     <div className="h-screen flex overflow-hidden">
+      {/* Left side: image */}
       <div className="hidden lg:block lg:w-2/3 h-full">
         <img
           src={bgImage}
@@ -24,6 +48,7 @@ export default function Login() {
         />
       </div>
 
+      {/* Right side: form */}
       <div className="w-full lg:w-1/3 overflow-auto">
         <div className="min-h-screen flex items-center justify-center p-8">
           <div className="w-full bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-8">
@@ -46,7 +71,7 @@ export default function Login() {
                 />
               </div>
 
-              {/* Contraseña */}
+              {/* Password */}
               <div>
                 <label className="block text-gray-700 mb-1">
                   Contraseña
@@ -61,7 +86,12 @@ export default function Login() {
                 />
               </div>
 
-              {/* Recordarme + Olvidaste */}
+              {/* Error message */}
+              {error && (
+                <div className="text-red-600 text-sm">{error}</div>
+              )}
+
+              {/* Remember me and forgot password */}
               <div className="flex items-center justify-between">
                 <label className="inline-flex items-center">
                   <input
@@ -81,7 +111,7 @@ export default function Login() {
                 </button>
               </div>
 
-              {/* Botón Entrar */}
+              {/* Entrar button */}
               <button
                 type="submit"
                 className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
@@ -90,7 +120,7 @@ export default function Login() {
               </button>
             </form>
 
-            {/* Redes sociales */}
+            {/* Social login buttons */}
             <div className="mt-6 flex space-x-4">
               <button className="flex-1 flex items-center justify-center py-2 border rounded-lg hover:bg-gray-100 transition">
                 Facebook
@@ -100,7 +130,7 @@ export default function Login() {
               </button>
             </div>
 
-            {/* Registro + Términos */}
+            {/* Register and terms */}
             <p className="mt-8 text-center text-gray-600">
               ¿No tienes cuenta?{' '}
               <button
