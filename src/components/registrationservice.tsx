@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import farmImg from '/src/assets/farm.png';
 import bcrypt from 'bcryptjs';
 
+const usersApiUrl = import.meta.env.VITE_API_USERS_URL;
+
 const Registro = () => {
   const navigate = useNavigate();
 
@@ -46,7 +48,7 @@ const Registro = () => {
     }
 
   try {
-    const response = await fetch('http://localhost:5001/users/register', {
+    const response = await fetch(`${usersApiUrl}/users/register`, {
       method: 'POST',
       headers: {
         'accept': 'application/json',

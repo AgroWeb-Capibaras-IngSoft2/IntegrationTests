@@ -7,6 +7,8 @@ import { Icon } from '@iconify/react';
 import { CategoryFilter } from './category-filter';
 import { ProductCard } from './product-card';
 
+import { useNavigate } from 'react-router-dom';
+
 // 1. Import fetchProducts and Product type
 import { fetchProducts } from '../data/product';
 import { Product } from '../types/product';
@@ -23,14 +25,25 @@ export default function Catalog() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   const itemsPerPage = 8;
+
+  const userName = localStorage.getItem('userName');
 
   // 3. Fetch products from backend
   useEffect(() => {
+    setLoading(true);
     fetchProducts()
-      .then(setProducts)
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .then(data => {
+        setProducts(data);
+        setError(null);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("No se pudieron cargar los productos. Intenta nuevamente más tarde.");
+        setLoading(false);
+      });
   }, []);
 
   // 4. Remove static products array usage
@@ -137,9 +150,16 @@ export default function Catalog() {
                 className="text-lg text-gray-600"
               />
             </button>
-            <button className="hidden md:block px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors">
-              Iniciar Sesión
-            </button>
+            {userName ? (
+              <span className="hidden md:block text-green-600 underline font-semibold">
+                {userName}
+              </span>
+            ) : (
+              <button className="hidden md:block px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
+              onClick={() => navigate('/')}>
+                Iniciar Sesión
+              </button>
+            )}
           </div>
         </div>
       </nav>

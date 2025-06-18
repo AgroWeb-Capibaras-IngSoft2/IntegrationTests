@@ -10,6 +10,7 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isHovered, setIsHovered] = React.useState(false);
+  const [imgError, setImgError] = React.useState(false);
 
   return (
     <div
@@ -21,8 +22,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <img
           src={product.imageUrl}
           alt={product.name}
+          onError={e => {
+            e.currentTarget.src = "/static/default.jpg";
+            setImgError(true);
+          }}
           className="w-full aspect-square object-cover"
         />
+
+        {imgError && (
+          <span className="absolute bottom-2 left-2 bg-white bg-opacity-80 text-red-500 text-xs px-2 py-1 rounded">
+            No se pudo cargar la imagen del producto.
+          </span>
+        )}
 
         {product.isOrganic && (
           <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase bg-green-500 text-white">

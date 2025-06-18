@@ -10,13 +10,14 @@ export default function Login() {
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const usersApiUrl = import.meta.env.VITE_API_USERS_URL;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await fetch('http://127.0.0.1:5001/users/autenticate/', {
+      const response = await fetch(`${usersApiUrl}/users/autenticate/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -28,9 +29,23 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        navigate('/catalog'); // Redirect to catalog after successful login
-        // You can store user info/token here if needed
-        // navigate('/dashboard'); // Uncomment if you have a dashboard route
+        // Fetch user data by email to get the username
+        try {
+          const userResp = await fetch(`${usersApiUrl}/users/getByEmail/${email}`);
+          const userData = await userResp.json();
+          if (userResp.ok && userData.user && userData.user.username) {
+            localStorage.setItem('userName', userData.user.username);
+          } else if (userData.user && userData.user.name) {
+            localStorage.setItem('userName', userData.user.name);
+          } else {
+            localStorage.setItem('userName', email);
+          }
+          navigate('/catalog');
+        } catch (err) {
+          // If fetching user data fails, fallback to email
+          localStorage.setItem('userName', email);
+          navigate('/catalog');
+        }
       } else {
         setError(data.error || 'Error de autenticación');
       }
