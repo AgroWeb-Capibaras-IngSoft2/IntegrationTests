@@ -16,7 +16,6 @@ export default function Catalog() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [sortOption, setSortOption] = useState("popular");
 
   // 2. Add products, loading, error state
   const [products, setProducts] = useState<Product[]>([]);
@@ -236,7 +235,7 @@ export default function Catalog() {
               </div>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Buscar Productos..."
                 className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -309,10 +308,12 @@ export default function Catalog() {
               icon="lucide:search-x"
               className="text-4xl text-gray-400 mb-4"
             />
-            <h3 className="text-xl font-medium">No products found</h3>
+            <h3 className="text-xl font-medium">
+              No hay productos encontrados
+            </h3>
             <p className="text-gray-500 mt-2 text-center">
-              Try adjusting your search or filter to find what you're looking
-              for.
+              Intenta ajustar tu búsqueda o filtro para encontrar lo que estás
+              buscando.
             </p>
             <button
               className="mt-4 px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
@@ -321,7 +322,7 @@ export default function Catalog() {
                 setSelectedCategory("all");
               }}
             >
-              Clear filters
+              Limpiar filtros
             </button>
           </div>
         )}

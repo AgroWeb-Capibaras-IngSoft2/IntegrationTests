@@ -1,30 +1,41 @@
-// src/components/registrationservice.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import farmImg from '../assets/farm.png';
+import farmImg from '/src/assets/farm.png';
 
-const Registro: React.FC = () => {
+const Registro = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    nombre: '',
-    correo: '',
-    contrasena: '',
-    repetirContrasena: '',
+    firstName: '',
+    middleName: '',
+    surName1: '',
+    surName2: '',
+    bornDate: '',
+    department: '',
+    municipality: '',
+    trail: '',
+    email: '',
+    typeDocument: '',
+    numberDocument: '',
+    phoneNumber: '',
+    hashPassword: '',
+    repeatHashPassword: '',
+    username: '',
     aceptoTerminos: false
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [name]: type === 'checkbox' ? checked : value
-    }));
+    });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
-    if (formData.contrasena !== formData.repetirContrasena) {
+    if (formData.hashPassword !== formData.repeatHashPassword) {
       alert('Las contraseñas no coinciden.');
       return;
     }
@@ -32,106 +43,137 @@ const Registro: React.FC = () => {
       alert('Debes aceptar los términos y condiciones.');
       return;
     }
-    console.log('Datos registrados:', formData);
-    alert('¡Registro exitoso!');
-    navigate('/'); // opcional: vuelve al login tras registrarse
+
+    try{
+      const response= await fetch("http://localhost:5001/users/register",
+        {
+          method:'POST',
+          headers:{
+            'Content-Type': 'application/json'
+          },
+          body:JSON.stringify(formData)
+        }
+      );
+
+      if (response.ok){
+        const data = await response.json();
+        console.log('Respuesta del backend:', data);
+        alert('¡Registro exitoso!');
+        
+      }
+      else{
+        const error = await response.json();
+        alert(`Error en el registro: ${error.mensaje || 'Error desconocido'}`);
+      }
+    }
+    catch (error){
+      console.error('Error en la petición:', error);
+      alert('Ocurrió un error al conectar con el servidor.');
+    }
   };
 
+  const handleIrAlLogin = () => {
+    navigate('/');
+  };
+
+  const campos = [
+    { label: 'Nombre', name: 'nombre' },
+    { label: 'Segundo nombre', name: 'segundoNombre' },
+    { label: 'Primer apellido', name: 'apellido1' },
+    { label: 'Segundo apellido', name: 'apellido2' },
+    { label: 'Fecha de nacimiento', name: 'fechaNacimiento', type: 'date', inputMode: 'numeric', pattern: '\\d{4}-\\d{2}-\\d{2}' },
+    { label: 'Departamento', name: 'departamento' },
+    { label: 'Municipio', name: 'municipio' },
+    { label: 'Ruta', name: 'ruta' },
+    { label: 'Correo electrónico', name: 'correo', type: 'email' },
+    { label: 'Número de documento', name: 'numeroDocumento' },
+    { label: 'Número de teléfono', name: 'telefono' },
+    { label: 'Nombre de usuario', name: 'nombreUsuario' },
+    { label: 'Contraseña', name: 'contrasena', type: 'password' },
+    { label: 'Repetir contraseña', name: 'repetirContrasena', type: 'password' }
+  ];
+
   return (
-    <div className="container mt-5">
-      <div className="row align-items-center">
-        {/* Imagen y mensaje */}
-        <div className="col-md-6 text-center mb-4 mb-md-0">
-          <h2>Productos frescos del campo a tu mesa</h2>
+    <div className="container mt-4">
+      <header className="text-center mb-4">
+        <h1 style={{ color: 'green' }}>Agroweb</h1>
+      </header>
+      <div className="row align-items-start">
+        <div className="col-md-6 mb-4 d-flex flex-column align-items-center position-relative">
+          <h2 className="position-absolute top-0 start-50 translate-middle-x text-center bg-white px-2" style={{ marginTop: '-1.5rem', zIndex: 1 }}>
+            Productos frescos del campo a tu mesa
+          </h2>
           <img
             src={farmImg}
             alt="Granja"
-            className="img-fluid border rounded mt-3"
-            style={{ maxWidth: '100%', height: 'auto' }}
+            className="img-fluid border rounded shadow-sm mt-5"
+            style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
           />
         </div>
 
-        {/* Formulario de registro */}
         <div className="col-md-6">
-          <h3 className="fw-bold mb-3">Crear una cuenta</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="form-label">Nombre y apellido</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Ej. Rodolfo Rivera"
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h3 className="fw-bold mb-4 text-center">Crear una cuenta</h3>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  {campos.map(({ label, name, type = 'text', inputMode, pattern }) => (
+                    <div className="col-md-6 mb-3" key={name}>
+                      <label className="form-label fw-semibold">{label}</label>
+                      <input
+                        type={type}
+                        className="form-control"
+                        name={name}
+                        value={formData[name]}
+                        onChange={handleChange}
+                        required
+                        {...(inputMode ? { inputMode } : {})}
+                        {...(pattern ? { pattern } : {})}
+                      />
+                    </div>
+                  ))}
 
-            <div className="mb-3">
-              <label className="form-label">Correo electrónico</label>
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Ej. hey@rodolforivera.co"
-                name="correo"
-                value={formData.correo}
-                onChange={handleChange}
-                required
-              />
-            </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label fw-semibold">Tipo de documento</label>
+                    <select
+                      className="form-select"
+                      name="tipoDocumento"
+                      value={formData.tipoDocumento}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="C.C">C.C</option>
+                    </select>
+                  </div>
 
-            <div className="mb-3">
-              <label className="form-label">Contraseña</label>
-              <input
-                type="password"
-                className="form-control"
-                name="contrasena"
-                value={formData.contrasena}
-                onChange={handleChange}
-                required
-              />
-            </div>
+                  <div className="col-12 mb-3">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="aceptoTerminos"
+                        checked={formData.aceptoTerminos}
+                        onChange={handleChange}
+                      />
+                      <label className="form-check-label">
+                        Acepto los <a href="#">términos y condiciones</a> de servicio
+                      </label>
+                    </div>
+                  </div>
 
-            <div className="mb-3">
-              <label className="form-label">Repetir contraseña</label>
-              <input
-                type="password"
-                className="form-control"
-                name="repetirContrasena"
-                value={formData.repetirContrasena}
-                onChange={handleChange}
-                required
-              />
+                  <div className="col-12 d-grid gap-2">
+                    <button type="submit" className="btn btn-success">
+                      Registrarme
+                    </button>
+                    <button type="button" className="btn btn-outline-success" onClick={handleIrAlLogin}>
+                      Ya tengo cuenta
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-
-            <div className="form-check mb-4">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="aceptoTerminos"
-                checked={formData.aceptoTerminos}
-                onChange={handleChange}
-                id="aceptoTerminos"
-              />
-              <label className="form-check-label" htmlFor="aceptoTerminos">
-                Acepto los <a href="#">términos y condiciones</a> de servicio
-              </label>
-            </div>
-
-            <div className="d-flex gap-2">
-              <button type="submit" className="btn btn-success">
-                Registrarme
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-success"
-                onClick={() => navigate('/')}
-              >
-                Ya tengo cuenta
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
