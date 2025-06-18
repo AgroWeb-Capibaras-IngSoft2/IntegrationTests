@@ -3,21 +3,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Registro = () => {
   const [formData, setFormData] = useState({
-    nombre: '',
-    segundoNombre: '',
-    apellido1: '',
-    apellido2: '',
-    fechaNacimiento: '',
-    departamento: '',
-    municipio: '',
-    ruta: '',
-    correo: '',
-    tipoDocumento: '',
-    numeroDocumento: '',
-    telefono: '',
-    contrasena: '',
-    repetirContrasena: '',
-    nombreUsuario: '',
+    firstName: '',
+    middleName: '',
+    surName1: '',
+    surName2: '',
+    bornDate: '',
+    department: '',
+    municipality: '',
+    trail: '',
+    email: '',
+    typeDocument: '',
+    numberDocument: '',
+    phoneNumber: '',
+    hashPassword: '',
+    repeatHashPassword: '',
+    username: '',
     aceptoTerminos: false
   });
 
@@ -29,9 +29,9 @@ const Registro = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
-    if (formData.contrasena !== formData.repetirContrasena) {
+    if (formData.hashPassword !== formData.repeatHashPassword) {
       alert('Las contraseñas no coinciden.');
       return;
     }
@@ -39,8 +39,33 @@ const Registro = () => {
       alert('Debes aceptar los términos y condiciones.');
       return;
     }
-    console.log('Datos registrados:', formData);
-    alert('¡Registro exitoso!');
+
+    try{
+      const response= await fetch("http://localhost:5001/users/register",
+        {
+          method:'POST',
+          headers:{
+            'Content-Type': 'application/json'
+          },
+          body:JSON.stringify(formData)
+        }
+      );
+
+      if (response.ok){
+        const data = await response.json();
+        console.log('Respuesta del backend:', data);
+        alert('¡Registro exitoso!');
+        
+      }
+      else{
+        const error = await response.json();
+        alert(`Error en el registro: ${error.mensaje || 'Error desconocido'}`);
+      }
+    }
+    catch (error){
+      console.error('Error en la petición:', error);
+      alert('Ocurrió un error al conectar con el servidor.');
+    }
   };
 
   return (
@@ -60,21 +85,21 @@ const Registro = () => {
           <h3 className="fw-bold mb-3">Crear una cuenta</h3>
           <form onSubmit={handleSubmit}>
             {[
-              { label: 'Nombre', name: 'nombre' },
-              { label: 'Segundo nombre', name: 'segundoNombre' },
-              { label: 'Primer apellido', name: 'apellido1' },
-              { label: 'Segundo apellido', name: 'apellido2' },
-              { label: 'Fecha de nacimiento', name: 'fechaNacimiento', type: 'date' },
-              { label: 'Departamento', name: 'departamento' },
-              { label: 'Municipio', name: 'municipio' },
-              { label: 'Ruta', name: 'ruta' },
-              { label: 'Correo electrónico', name: 'correo', type: 'email' },
-              { label: 'Tipo de documento', name: 'tipoDocumento' },
-              { label: 'Número de documento', name: 'numeroDocumento' },
-              { label: 'Número de teléfono', name: 'telefono' },
-              { label: 'Nombre de usuario', name: 'nombreUsuario' },
-              { label: 'Contraseña', name: 'contrasena', type: 'password' },
-              { label: 'Repetir contraseña', name: 'repetirContrasena', type: 'password' }
+              { label: 'Nombre', name: 'firstName' },
+              { label: 'Segundo nombre', name: 'middleName' },
+              { label: 'Primer apellido', name: 'surName1' },
+              { label: 'Segundo apellido', name: 'surName2' },
+              { label: 'Fecha de nacimiento', name: 'bornDate', type: 'date' },
+              { label: 'Departamento', name: 'department' },
+              { label: 'Municipio', name: 'municipality' },
+              { label: 'Ruta', name: 'trail' },
+              { label: 'Correo electrónico', name: 'email', type: 'email' },
+              { label: 'Tipo de documento', name: 'typeDocument' },
+              { label: 'Número de documento', name: 'numberDocument' },
+              { label: 'Número de teléfono', name: 'phoneNumber' },
+              { label: 'Nombre de usuario', name: 'username' },
+              { label: 'Contraseña', name: 'hashPassword', type: 'password' },
+              { label: 'Repetir contraseña', name: 'repeatHashPassword', type: 'password' }
             ].map(({ label, name, type = 'text' }) => (
               <div className="mb-3" key={name}>
                 <label className="form-label">{label}</label>
