@@ -4,8 +4,8 @@ import { ChevronRight } from 'lucide-react';
 
 import { Icon } from '@iconify/react';
 
+import { products } from '../data/product';
 import { CategoryFilter } from './category-filter';
-import { products } from './data/product';
 import { ProductCard } from './product-card';
 
 export default function Catalog() {
