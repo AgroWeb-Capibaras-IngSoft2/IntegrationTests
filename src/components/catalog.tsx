@@ -13,7 +13,6 @@ export default function Catalog() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [sortOption, setSortOption] = useState("popular");
 
   const itemsPerPage = 8;
 
@@ -190,7 +189,7 @@ export default function Catalog() {
               </div>
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Buscar Productos..."
                 className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

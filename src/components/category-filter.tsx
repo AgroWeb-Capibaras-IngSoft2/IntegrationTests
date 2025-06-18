@@ -28,11 +28,12 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       <Tabs
         selectedKey={selectedCategory}
         onSelectionChange={(key) => onSelectCategory(key as string)}
-        color="primary"
+        color="default"
         variant="light"
         classNames={{
           base: "overflow-x-auto",
-          tabList: "gap-2 w-full sm:w-auto",
+          tabList: "gap-2 w-full sm:w-auto bg-green-50 p-2 rounded-lg",
+          tab: "flex items-center gap-2 px-4 py-2 rounded-lg transition-colors hover:bg-gray-100",
         }}
       >
         {categories.map((category) => (
