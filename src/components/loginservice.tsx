@@ -17,7 +17,7 @@ export default function Login() {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="h-screen flex overflow-hidden bg-gray-100 dark:bg-gray-900">
       {/* IZQUIERDA: 1/2 ancho en lg, 100% altura */}
       <div className="hidden lg:block lg:w-1/2 h-full">
         <img
@@ -27,17 +27,17 @@ export default function Login() {
         />
       </div>
 
-      {/* DERECHA: 1/2 ancho en lg, scroll si es necesario */}
+      {/* DERECHA: 1/2 ancho en lg, centrado y sin scroll */}
       <div className="w-full lg:w-1/2 flex items-center justify-center overflow-hidden">
         <div className="flex items-center justify-center py-4">
-          <div className="w-full max-w-xl bg-white rounded-lg shadow-lg p-6 mx-4 sm:mx-8">
-            <h1 className="text-3xl font-bold text-green-700 mb-4">AgroWeb</h1>
+          <div className="w-full max-w-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-lg p-6 mx-4 sm:mx-8">
+            <h1 className="text-3xl font-bold text-green-700 dark:text-green-400 mb-4">AgroWeb</h1>
             <h2 className="text-2xl font-semibold mb-8">¡Bienvenido de vuelta!</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email */}
               <div>
-                <label className="block text-gray-700 mb-1">
+                <label className="block text-gray-700 dark:text-gray-300 mb-1">
                   Correo electrónico
                 </label>
                 <input
@@ -45,27 +45,27 @@ export default function Login() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   placeholder="Escribe tu correo electrónico"
                 />
               </div>
 
               {/* Contraseña con botón 'ojito' */}
               <div>
-                <label className="block text-gray-700 mb-1">Contraseña</label>
+                <label className="block text-gray-700 dark:text-gray-300 mb-1">Contraseña</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
-                    className="w-full pr-12 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full pr-12 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Escribe tu contraseña"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(prev => !prev)}
-                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 bg-transparent border-none p-0 focus:outline-none focus:ring-0 hover:text-gray-700"
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-300 bg-transparent border-none p-0 focus:outline-none focus:ring-0 hover:text-gray-700 dark:hover:text-white"
                     tabIndex={-1}
                   >
                     {showPassword ? '🙈' : '👁️'}
@@ -80,14 +80,14 @@ export default function Login() {
                     type="checkbox"
                     checked={remember}
                     onChange={e => setRemember(e.target.checked)}
-                    className="form-checkbox h-5 w-5 text-green-600"
+                    className="form-checkbox h-5 w-5 text-green-600 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <span className="ml-2 text-gray-700">Recuérdame</span>
+                  <span className="ml-2 text-gray-700 dark:text-gray-300">Recuérdame</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => navigate('/forgot-password')}
-                  className="text-sm text-green-600 hover:underline focus:outline-none"
+                  className="text-sm text-green-600 dark:text-green-400 hover:underline focus:outline-none"
                 >
                   ¿Olvidaste tu contraseña?
                 </button>
@@ -105,7 +105,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => navigate('/catalog')}
-                className="w-full border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-100 transition"
+                className="w-full border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-100 dark:hover:bg-green-900 transition bg-white"
               >
                 Continuar como visitante
               </button>
@@ -113,31 +113,31 @@ export default function Login() {
 
             {/* Redes sociales */}
             <div className="mt-6 flex space-x-4">
-              <button className="flex-1 flex items-center justify-center py-2 border rounded-lg hover:bg-gray-100 transition">
+              <button className="flex-1 flex items-center justify-center py-2 border rounded-lg bg-white text-black hover:bg-gray-100 transition">
                 Facebook
               </button>
-              <button className="flex-1 flex items-center justify-center py-2 border rounded-lg hover:bg-gray-100 transition">
+              <button className="flex-1 flex items-center justify-center py-2 border rounded-lg bg-white text-black hover:bg-gray-100 transition">
                 Google
               </button>
             </div>
 
             {/* Registro + Términos */}
-            <p className="mt-8 text-center text-gray-600">
+            <p className="mt-8 text-center text-gray-600 dark:text-gray-400">
               ¿No tienes cuenta?{' '}
               <button
                 onClick={() => navigate('/signup')}
-                className="text-green-600 font-medium hover:underline focus:outline-none"
+                className="text-green-600 font-medium hover:underline focus:outline-none bg-transparent"
               >
                 Regístrate
               </button>
             </p>
-            <p className="mt-2 text-center text-xs text-gray-500">
+            <p className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
               Al registrarte estás de acuerdo con los{' '}
-              <a href="/terms" className="text-green-600 hover:underline">
+              <a href="/terms" className="text-green-600 dark:text-green-400 hover:underline">
                 Términos de servicio
               </a>{' '}
               y la{' '}
-              <a href="/privacy" className="text-green-600 hover:underline">
+              <a href="/privacy" className="text-green-600 dark:text-green-400 hover:underline">
                 Política de privacidad
               </a>.
             </p>
