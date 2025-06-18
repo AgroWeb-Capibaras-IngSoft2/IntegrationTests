@@ -1,21 +1,19 @@
 // src/App.tsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Login from './components/loginservice'   // <-- Asegúrate de que la ruta coincida
-import Register from './components/registrationservice'; // ruta correcta según tu estructura
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/loginservice';
+import Registro from './components/registrationservice';
 
-export default function App() {
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        {/* Ruta de login en “/” */}
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-
-        {/* Aquí luego agregarás más rutas, p.ej. Dashboard, Signup, etc. */}
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        {/* <Route path="/signup" element={<Signup />} /> */}
+        <Route path="/signup" element={<Registro />} />
+        {/* otras rutas: */}
       </Routes>
-    </BrowserRouter>
-  )
+    </Router>
+  );
 }
 
+export default App;

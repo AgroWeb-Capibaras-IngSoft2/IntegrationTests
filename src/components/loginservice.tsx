@@ -16,7 +16,6 @@ export default function Login() {
 
   return (
     <div className="h-screen flex overflow-hidden">
-      {/* IZQUIERDA: 2/3 del ancho, 100% de la altura de la pantalla, sin scroll */}
       <div className="hidden lg:block lg:w-2/3 h-full">
         <img
           src={bgImage}
@@ -25,7 +24,6 @@ export default function Login() {
         />
       </div>
 
-      {/* DERECHA: 1/3 del ancho, scroll interno si el contenido desborda */}
       <div className="w-full lg:w-1/3 overflow-auto">
         <div className="min-h-screen flex items-center justify-center p-8">
           <div className="w-full bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-8">
