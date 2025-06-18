@@ -16,6 +16,7 @@ export default function Catalog() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [sortOption, setSortOption] = useState("popular");
 
   // 2. Add products, loading, error state
   const [products, setProducts] = useState<Product[]>([]);
