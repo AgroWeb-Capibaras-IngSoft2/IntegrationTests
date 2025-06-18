@@ -8,15 +8,18 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log('Login:', { email, password, remember });
+    // aquí tu lógica de login...
   };
 
   return (
     <div className="h-screen flex overflow-hidden">
-      <div className="hidden lg:block lg:w-2/3 h-full">
+      {/* IZQUIERDA: 1/2 ancho en lg, 100% altura */}
+      <div className="hidden lg:block lg:w-1/2 h-full">
         <img
           src={bgImage}
           alt="paisaje de login"
@@ -24,9 +27,10 @@ export default function Login() {
         />
       </div>
 
-      <div className="w-full lg:w-1/3 overflow-auto">
+      {/* DERECHA: 1/2 ancho en lg, scroll si es necesario */}
+      <div className="w-full lg:w-1/2 overflow-auto">
         <div className="min-h-screen flex items-center justify-center p-8">
-          <div className="w-full bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-8">
+          <div className="w-full max-w-lg bg-white rounded-lg shadow-lg p-8 mx-4 sm:mx-8">
             <h1 className="text-3xl font-bold text-green-700 mb-4">AgroWeb</h1>
             <h2 className="text-2xl font-semibold mb-8">¡Bienvenido de vuelta!</h2>
 
@@ -46,19 +50,27 @@ export default function Login() {
                 />
               </div>
 
-              {/* Contraseña */}
+              {/* Contraseña con botón 'ojito' */}
               <div>
-                <label className="block text-gray-700 mb-1">
-                  Contraseña
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="Escribe tu contraseña"
-                />
+                <label className="block text-gray-700 mb-1">Contraseña</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    className="w-full pr-12 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="Escribe tu contraseña"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 bg-transparent border-none p-0 focus:outline-none focus:ring-0 hover:text-gray-700"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? '🙈' : '👁️'}
+                  </button>
+                </div>
               </div>
 
               {/* Recordarme + Olvidaste */}
@@ -75,9 +87,9 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => navigate('/forgot-password')}
-                  className="text-sm text-green-600 hover:underline"
+                  className="text-sm text-green-600 hover:underline focus:outline-none"
                 >
-                  Olvidaste tu contraseña?
+                  ¿Olvidaste tu contraseña?
                 </button>
               </div>
 
@@ -87,6 +99,15 @@ export default function Login() {
                 className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition"
               >
                 Entrar
+              </button>
+
+              {/* Continuar como visitante */}
+              <button
+                type="button"
+                onClick={() => navigate('/catalog')}
+                className="w-full border border-green-600 text-green-600 py-3 rounded-lg hover:bg-green-100 transition"
+              >
+                Continuar como visitante
               </button>
             </form>
 
@@ -105,7 +126,7 @@ export default function Login() {
               ¿No tienes cuenta?{' '}
               <button
                 onClick={() => navigate('/signup')}
-                className="text-green-600 font-medium hover:underline"
+                className="text-green-600 font-medium hover:underline focus:outline-none"
               >
                 Regístrate
               </button>
