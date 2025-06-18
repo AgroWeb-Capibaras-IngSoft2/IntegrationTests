@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { ChevronRight } from 'lucide-react';
 
 import { Icon } from '@iconify/react';
 
-import { products } from '../data/product';
 import { CategoryFilter } from './category-filter';
 import { ProductCard } from './product-card';
+
+// 1. Import fetchProducts and Product type
+import { fetchProducts } from '../data/product';
+import { Product } from '../types/product';
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [sortOption, setSortOption] = useState("popular");
+
+  // 2. Add products, loading, error state
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const itemsPerPage = 8;
 
-  const filteredProducts = products.filter((product) => {
+  // 3. Fetch products from backend
+  useEffect(() => {
+    fetchProducts()
+      .then(setProducts)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // 4. Remove static products array usage
+  // 5. Filtering and sorting logic
+  let filteredProducts = products.filter((product) => {
     const matchesCategory =
       selectedCategory === "all" || product.category === selectedCategory;
     const matchesSearch = product.name
@@ -24,6 +43,18 @@ export default function Catalog() {
       .includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  // Optional: Sorting logic
+  if (sortOption === "price-low") {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+  } else if (sortOption === "price-high") {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+  } else if (sortOption === "name") {
+    filteredProducts = [...filteredProducts].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
+  // "popular" can be left as default order
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const currentProducts = filteredProducts.slice(
@@ -41,6 +72,22 @@ export default function Catalog() {
       setCurrentPage(page);
     }
   };
+
+  // 6. Loading and error states
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-lg text-gray-500">Cargando productos...</span>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-lg text-red-500">Error: {error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -202,8 +249,9 @@ export default function Catalog() {
         {currentProducts.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {/* 7. Use product.productId as key */}
               {currentProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.productId} product={product} />
               ))}
             </div>
 
