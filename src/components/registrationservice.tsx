@@ -7,21 +7,21 @@ const Registro = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    nombre: '',
-    segundoNombre: '',
-    apellido1: '',
-    apellido2: '',
-    fechaNacimiento: '',
-    departamento: '',
-    municipio: '',
-    ruta: '',
-    correo: '',
-    tipoDocumento: '',
-    numeroDocumento: '',
-    telefono: '',
-    contrasena: '',
-    repetirContrasena: '',
-    nombreUsuario: '',
+    firstName: '',
+    middleName: '',
+    surName1: '',
+    surName2: '',
+    bornDate: '',
+    department: '',
+    municipality: '',
+    trail: '',
+    email: '',
+    typeDocument: '',
+    numberDocument: '',
+    phoneNumber: '',
+    hashPassword: '',
+    repeatHashPassword: '',
+    username: '',
     aceptoTerminos: false
   });
 
@@ -33,9 +33,9 @@ const Registro = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
-    if (formData.contrasena !== formData.repetirContrasena) {
+    if (formData.hashPassword !== formData.repeatHashPassword) {
       alert('Las contraseñas no coinciden.');
       return;
     }
@@ -43,8 +43,33 @@ const Registro = () => {
       alert('Debes aceptar los términos y condiciones.');
       return;
     }
-    console.log('Datos registrados:', formData);
-    alert('¡Registro exitoso!');
+
+    try{
+      const response= await fetch("http://localhost:5001/users/register",
+        {
+          method:'POST',
+          headers:{
+            'Content-Type': 'application/json'
+          },
+          body:JSON.stringify(formData)
+        }
+      );
+
+      if (response.ok){
+        const data = await response.json();
+        console.log('Respuesta del backend:', data);
+        alert('¡Registro exitoso!');
+        
+      }
+      else{
+        const error = await response.json();
+        alert(`Error en el registro: ${error.mensaje || 'Error desconocido'}`);
+      }
+    }
+    catch (error){
+      console.error('Error en la petición:', error);
+      alert('Ocurrió un error al conectar con el servidor.');
+    }
   };
 
   const handleIrAlLogin = () => {
