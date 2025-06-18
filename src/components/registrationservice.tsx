@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import farmImg from '/src/assets/farm.png';
 
 const Registro = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: '',
     middleName: '',
@@ -68,74 +72,108 @@ const Registro = () => {
     }
   };
 
+  const handleIrAlLogin = () => {
+    navigate('/');
+  };
+
+  const campos = [
+    { label: 'Nombre', name: 'nombre' },
+    { label: 'Segundo nombre', name: 'segundoNombre' },
+    { label: 'Primer apellido', name: 'apellido1' },
+    { label: 'Segundo apellido', name: 'apellido2' },
+    { label: 'Fecha de nacimiento', name: 'fechaNacimiento', type: 'date', inputMode: 'numeric', pattern: '\\d{4}-\\d{2}-\\d{2}' },
+    { label: 'Departamento', name: 'departamento' },
+    { label: 'Municipio', name: 'municipio' },
+    { label: 'Ruta', name: 'ruta' },
+    { label: 'Correo electrónico', name: 'correo', type: 'email' },
+    { label: 'Número de documento', name: 'numeroDocumento' },
+    { label: 'Número de teléfono', name: 'telefono' },
+    { label: 'Nombre de usuario', name: 'nombreUsuario' },
+    { label: 'Contraseña', name: 'contrasena', type: 'password' },
+    { label: 'Repetir contraseña', name: 'repetirContrasena', type: 'password' }
+  ];
+
   return (
-    <div className="container mt-5">
-      <div className="row align-items-center">
-        <div className="col-md-6">
-          <h2 className="text-center">Productos frescos del campo a tu mesa</h2>
+    <div className="container mt-4">
+      <header className="text-center mb-4">
+        <h1 style={{ color: 'green' }}>Agroweb</h1>
+      </header>
+      <div className="row align-items-start">
+        <div className="col-md-6 mb-4 d-flex flex-column align-items-center position-relative">
+          <h2 className="position-absolute top-0 start-50 translate-middle-x text-center bg-white px-2" style={{ marginTop: '-1.5rem', zIndex: 1 }}>
+            Productos frescos del campo a tu mesa
+          </h2>
           <img
-            src="/assets/farm.png"
+            src={farmImg}
             alt="Granja"
-            className="img-fluid border rounded"
-            style={{ width: '500px', height: 'auto' }}
+            className="img-fluid border rounded shadow-sm mt-5"
+            style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
           />
         </div>
 
         <div className="col-md-6">
-          <h3 className="fw-bold mb-3">Crear una cuenta</h3>
-          <form onSubmit={handleSubmit}>
-            {[
-              { label: 'Nombre', name: 'firstName' },
-              { label: 'Segundo nombre', name: 'middleName' },
-              { label: 'Primer apellido', name: 'surName1' },
-              { label: 'Segundo apellido', name: 'surName2' },
-              { label: 'Fecha de nacimiento', name: 'bornDate', type: 'date' },
-              { label: 'Departamento', name: 'department' },
-              { label: 'Municipio', name: 'municipality' },
-              { label: 'Ruta', name: 'trail' },
-              { label: 'Correo electrónico', name: 'email', type: 'email' },
-              { label: 'Tipo de documento', name: 'typeDocument' },
-              { label: 'Número de documento', name: 'numberDocument' },
-              { label: 'Número de teléfono', name: 'phoneNumber' },
-              { label: 'Nombre de usuario', name: 'username' },
-              { label: 'Contraseña', name: 'hashPassword', type: 'password' },
-              { label: 'Repetir contraseña', name: 'repeatHashPassword', type: 'password' }
-            ].map(({ label, name, type = 'text' }) => (
-              <div className="mb-3" key={name}>
-                <label className="form-label">{label}</label>
-                <input
-                  type={type}
-                  className="form-control"
-                  name={name}
-                  value={formData[name]}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            ))}
+          <div className="card shadow-sm">
+            <div className="card-body">
+              <h3 className="fw-bold mb-4 text-center">Crear una cuenta</h3>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  {campos.map(({ label, name, type = 'text', inputMode, pattern }) => (
+                    <div className="col-md-6 mb-3" key={name}>
+                      <label className="form-label fw-semibold">{label}</label>
+                      <input
+                        type={type}
+                        className="form-control"
+                        name={name}
+                        value={formData[name]}
+                        onChange={handleChange}
+                        required
+                        {...(inputMode ? { inputMode } : {})}
+                        {...(pattern ? { pattern } : {})}
+                      />
+                    </div>
+                  ))}
 
-            <div className="form-check mb-3">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                name="aceptoTerminos"
-                checked={formData.aceptoTerminos}
-                onChange={handleChange}
-              />
-              <label className="form-check-label">
-                Acepto los <a href="#">términos y condiciones</a> de servicio
-              </label>
-            </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label fw-semibold">Tipo de documento</label>
+                    <select
+                      className="form-select"
+                      name="tipoDocumento"
+                      value={formData.tipoDocumento}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="C.C">C.C</option>
+                    </select>
+                  </div>
 
-            <div className="d-flex gap-2">
-              <button type="submit" className="btn btn-success">
-                Registrarme
-              </button>
-              <button type="button" className="btn btn-outline-success">
-                Ya tengo cuenta
-              </button>
+                  <div className="col-12 mb-3">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name="aceptoTerminos"
+                        checked={formData.aceptoTerminos}
+                        onChange={handleChange}
+                      />
+                      <label className="form-check-label">
+                        Acepto los <a href="#">términos y condiciones</a> de servicio
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="col-12 d-grid gap-2">
+                    <button type="submit" className="btn btn-success">
+                      Registrarme
+                    </button>
+                    <button type="button" className="btn btn-outline-success" onClick={handleIrAlLogin}>
+                      Ya tengo cuenta
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
