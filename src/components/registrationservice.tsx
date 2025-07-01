@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import farmImg from '/src/assets/farm.png';
+import farmImg from '/src/assets/farm.jpeg';
 import bcrypt from 'bcryptjs';
+import '../index.css'; // Asegura que el CSS global se importe
 
 const usersApiUrl = import.meta.env.VITE_API_USERS_URL;
 
@@ -109,91 +110,82 @@ const Registro = () => {
     { label: 'Repetir contraseña', name: 'repetirContrasena', type: 'password' }
   ];
 
-  return (
-    <div className="container mt-4">
-      <header className="text-center mb-4">
-        <h1 style={{ color: 'green' }}>Agroweb</h1>
-      </header>
-      <div className="row align-items-start">
-        <div className="col-md-6 mb-4 d-flex flex-column align-items-center position-relative">
-          <h2 className="position-absolute top-0 start-50 translate-middle-x text-center bg-white px-2" style={{ marginTop: '-1.5rem', zIndex: 1 }}>
-            Productos frescos del campo a tu mesa
-          </h2>
-          <img
-            src={farmImg}
-            alt="Granja"
-            className="img-fluid border rounded shadow-sm mt-5"
-            style={{ width: '100%', maxWidth: '500px', height: 'auto' }}
-          />
-        </div>
-
-        <div className="col-md-6">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h3 className="fw-bold mb-4 text-center">Crear una cuenta</h3>
-              <form onSubmit={handleSubmit}>
-                <div className="row">
-                  {campos.map(({ label, name, type = 'text', inputMode, pattern }) => (
-                    <div className="col-md-6 mb-3" key={name}>
-                      <label className="form-label fw-semibold">{label}</label>
-                      <input
-                        type={type}
-                        className="form-control"
-                        name={name}
-                        value={formData[name]}
-                        onChange={handleChange}
-                        required
-                        {...(inputMode ? { inputMode } : {})}
-                        {...(pattern ? { pattern } : {})}
-                      />
-                    </div>
-                  ))}
-
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label fw-semibold">Tipo de documento</label>
-                    <select
-                      className="form-select"
-                      name="tipoDocumento"
-                      value={formData.tipoDocumento}
+ return (
+  <div className="container-fluid p-0">
+    <div className="row align-items-stretch" style={{ minHeight: '100vh' }}>
+      <div className="col-md-6 d-flex flex-column align-items-center position-relative p-0">
+        <img
+          src={farmImg}
+          alt="Granja"
+          className="img-cover border rounded shadow-sm h-100 w-100"
+          style={{ objectFit: 'cover', borderRadius: '0 0 0 1.5rem' }}
+        />
+      </div>
+      <div className="col-md-6 d-flex align-items-center justify-content-center bg-light" style={{ background: 'rgba(255,255,255,0.95)', borderRadius: '0 1.5rem 1.5rem 0' }}>
+        <div className="card shadow-lg w-100 border-0" style={{ maxWidth: '480px', borderRadius: '1.5rem', background: 'rgba(255,255,255,0.98)' }}>
+          <div className="card-body p-5">
+            <h2 className="fw-bold mb-4 text-center text-success" style={{ letterSpacing: '1px' }}>Crea una cuenta en AgroWeb</h2>
+            <form onSubmit={handleSubmit} autoComplete="off">
+              <div className="row g-3">
+                {campos.map(({ label, name, type = 'text', inputMode, pattern }) => (
+                  <div className="col-12 col-md-6" key={name}>
+                    <label className="form-label fw-semibold text-secondary small mb-1">{label}</label>
+                    <input
+                      type={type}
+                      className="form-control rounded-pill shadow-sm px-3 py-2"
+                      name={name}
+                      value={formData[name]}
                       onChange={handleChange}
                       required
-                    >
-                      <option value="">Seleccione...</option>
-                      <option value="C.C">C.C</option>
-                    </select>
+                      {...(inputMode ? { inputMode } : {})}
+                      {...(pattern ? { pattern } : {})}
+                    />
                   </div>
-
-                  <div className="col-12 mb-3">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        name="aceptoTerminos"
-                        checked={formData.aceptoTerminos}
-                        onChange={handleChange}
-                      />
-                      <label className="form-check-label">
-                        Acepto los <a href="#">términos y condiciones</a> de servicio
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="col-12 d-grid gap-2">
-                    <button type="submit" className="btn btn-success">
-                      Registrarme
-                    </button>
-                    <button type="button" className="btn btn-outline-success" onClick={handleIrAlLogin}>
-                      Ya tengo cuenta
-                    </button>
+                ))}
+                <div className="col-12 col-md-6">
+                  <label className="form-label fw-semibold text-secondary small mb-1">Tipo de documento</label>
+                  <select
+                    className="form-select rounded-pill shadow-sm px-3 py-2"
+                    name="tipoDocumento"
+                    value={formData.tipoDocumento}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Seleccione...</option>
+                    <option value="C.C">C.C</option>
+                  </select>
+                </div>
+                <div className="col-12">
+                  <div className="form-check mb-2">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="aceptoTerminos"
+                      checked={formData.aceptoTerminos}
+                      onChange={handleChange}
+                      id="aceptoTerminos"
+                    />
+                    <label className="form-check-label small text-secondary" htmlFor="aceptoTerminos">
+                      Acepto los <a href="#" className="text-success text-decoration-underline">términos y condiciones</a> de servicio
+                    </label>
                   </div>
                 </div>
-              </form>
-            </div>
+                <div className="col-12 d-grid gap-2 mt-2">
+                  <button type="submit" className="btn btn-success rounded-pill py-2 fw-bold shadow-sm">
+                    Registrarme
+                  </button>
+                  <button type="button" className="btn btn-outline-success rounded-pill py-2 fw-bold shadow-sm" onClick={handleIrAlLogin}>
+                    Ya tengo cuenta
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
-  );
-};
-
-export default Registro;
+    </div>
+    );
+  };
+  
+  export default Registro;
