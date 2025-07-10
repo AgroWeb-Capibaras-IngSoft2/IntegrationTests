@@ -7,6 +7,7 @@ import {
   Routes,
 } from 'react-router-dom';
 
+import Cart from './components/cart/Cart';
 import Catalog from './components/catalog';
 import Login from './components/loginservice';
 import Registro from './components/registrationservice';
@@ -18,6 +19,7 @@ function App() {
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Registro />} />
+        <Route path="/cart" element={<Cart />} />
         {/* otras rutas: */}
       </Routes>
     </Router>
