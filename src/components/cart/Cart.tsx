@@ -70,7 +70,7 @@ export default function Cart() {
                     <Icon icon="lucide:check" className="w-4 h-4 text-white" />
                   )}
                 </button>
-                <span className="ml-2 text-sm text-[#333333]">
+                <span className="text-sm text-[#333333] ml-2 font-semibold px-2  relative top-[4px]">
                   Todos los productos
                 </span>
               </div>
