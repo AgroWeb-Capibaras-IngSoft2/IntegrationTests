@@ -1,18 +1,27 @@
 import React from 'react';
-
 import { Icon } from '@iconify/react';
 
 import Navbar from '../navbar';
 import { CartItem } from './CartItem';
-import { CartSummary } from './CartSummay';
+import { CartSummary } from './CartSummary';
 
-const cartItems = [
+interface Item {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  checked: boolean;
+}
+
+const initialCartItems: Item[] = [
   {
     id: 1,
     name: "Router, Access Point, Repetidor, Wds Bridge, Ten...",
     price: 60000,
     quantity: 1,
     image: "https://img.heroui.chat/image/fashion?w=200&h=200&u=1",
+    checked: true,
   },
   {
     id: 2,
@@ -20,12 +29,14 @@ const cartItems = [
     price: 43900,
     quantity: 1,
     image: "https://img.heroui.chat/image/fashion?w=200&h=200&u=2",
+    checked: true,
   },
 ];
 
 export default function Cart() {
-  const [items, setItems] = React.useState(cartItems);
+  const [items, setItems] = React.useState<Item[]>(initialCartItems);
 
+  // Toggle quantity
   const updateQuantity = (id: number, newQuantity: number) => {
     setItems(
       items.map((item) =>
@@ -34,16 +45,46 @@ export default function Cart() {
     );
   };
 
+  // Remove item
   const removeItem = (id: number) => {
     setItems(items.filter((item) => item.id !== id));
   };
 
-  const total = items.reduce(
+  // Toggle individual checked state
+  const updateChecked = (id: number, checked: boolean) => {
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, checked } : item
+      )
+    );
+  };
+
+  // Select / Deselect all
+  const allChecked = items.length > 0 && items.every((item) => item.checked);
+  const toggleAll = () => {
+    setItems(items.map((item) => ({ ...item, checked: !allChecked })));
+  };
+
+  // Filter only selected items
+  const selectedItems = items.filter((item) => item.checked);
+
+  // Calculate totals
+  const productTotal = selectedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  const [isChecked, setIsChecked] = React.useState(true);
+  // Calculate total units
+  const unitsCount = selectedItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
+
+  // Shipping calculation (e.g., 5 650 c/u)
+  const shippingPerItem = 5650;
+  const shippingCount = unitsCount;
+  const shippingTotal = shippingPerItem * shippingCount;
+
   return (
     <div className="min-h-screen bg-[#EBEBEB]">
       <Navbar userName={null} />
@@ -54,23 +95,23 @@ export default function Cart() {
             <div className="p-4">
               <div className="flex items-center mb-4">
                 <button
-                  onClick={() => setIsChecked(!isChecked)}
+                  onClick={toggleAll}
                   className={`mt-2 flex items-center justify-center w-6 h-6 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 ${
-                    isChecked
+                    allChecked
                       ? "bg-green-600 hover:bg-green-700"
                       : "border-2 border-gray-300 hover:border-green-400"
                   }`}
                   aria-label={
-                    isChecked
+                    allChecked
                       ? `Deseleccionar todos los productos`
                       : `Seleccionar todos los productos`
                   }
                 >
-                  {isChecked && (
+                  {allChecked && (
                     <Icon icon="lucide:check" className="w-4 h-4 text-white" />
                   )}
                 </button>
-                <span className="text-sm text-[#333333] ml-2 font-semibold px-2  relative top-[4px]">
+                <span className="text-sm text-[#333333] ml-2 font-semibold px-2 relative top-[4px]">
                   Todos los productos
                 </span>
               </div>
@@ -79,6 +120,8 @@ export default function Cart() {
                 <CartItem
                   key={item.id}
                   item={item}
+                  isChecked={item.checked}
+                  updateChecked={updateChecked}
                   updateQuantity={updateQuantity}
                   removeItem={removeItem}
                 />
@@ -113,8 +156,15 @@ export default function Cart() {
             </div>
           </div>
         </div>
+
         <div className="w-full md:w-1/3">
-          <CartSummary total={total} />
+          <CartSummary
+            total={productTotal}
+            selectedCount={selectedItems.length}
+            unitsCount={unitsCount}
+            shippingCount={shippingCount}
+            shippingTotal={shippingTotal}
+          />
         </div>
       </div>
     </div>
