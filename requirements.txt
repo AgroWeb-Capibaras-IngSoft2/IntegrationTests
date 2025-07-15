@@ -1,0 +1,56 @@
+# Integration Testing Dependencies for AgroWeb - All Services
+# 
+# Core Testing Framework
+pytest>=7.4.0
+pytest-html>=3.2.0
+pytest-json-report>=1.5.0
+pytest-cov>=4.1.0
+pytest-xdist>=3.3.1
+pytest-benchmark>=4.0.0
+requests>=2.31.0
+httpx>=0.24.1
+
+# Data Handling and Validation
+jsonschema>=4.19.0
+pydantic>=2.1.1
+
+# PDF Generation and Reporting
+reportlab>=4.0.4
+matplotlib>=3.7.2
+seaborn>=0.12.2
+pandas>=2.0.3
+pillow>=9.0.0
+
+# Data Analysis and Visualization
+numpy>=1.21.0
+plotly>=5.0.0
+
+# HTTP Testing and Mocking
+responses>=0.21.0
+httpretty>=1.1.4
+
+# Load Testing
+locust>=2.16.1
+
+# Utilities
+python-dateutil>=2.8.0
+colorama>=0.4.0
+colorlog>=6.7.0
+tqdm>=4.64.0
+faker>=19.3.0
+
+# Environment and Configuration
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Database Testing Support (for Productos service)
+pymongo>=4.4.1
+cassandra-driver>=3.28.0
+
+# Monitoring and Observability Testing
+prometheus-client>=0.17.1
+
+# Development Dependencies
+black>=23.7.0
+flake8>=6.0.0
+mypy>=1.5.1
