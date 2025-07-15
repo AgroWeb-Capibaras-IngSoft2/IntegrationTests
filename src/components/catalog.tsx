@@ -31,7 +31,9 @@ export default function Catalog() {
 
   const itemsPerPage = 8;
 
+
   const userName = localStorage.getItem("userName");
+
 
   // 3. Fetch products from backend
   useEffect(() => {
@@ -109,7 +111,9 @@ export default function Catalog() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
+
       <Navbar userName={userName} />
+
       {/* Hero Banner */}
       <div className="relative w-full h-64 sm:h-80 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-green-600/80 to-green-400/30 z-10" />
