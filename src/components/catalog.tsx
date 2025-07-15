@@ -30,6 +30,7 @@ export default function Catalog() {
   const itemsPerPage = 8;
 
   const userName = localStorage.getItem('userName');
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   // 3. Fetch products from backend
   useEffect(() => {
@@ -151,12 +152,32 @@ export default function Catalog() {
               />
             </button>
             {userName ? (
-              <span className="hidden md:block text-green-600 underline font-semibold">
-                {userName}
-              </span>
+              <div className="relative hidden md:block">
+                <button
+                  className="text-green-600 underline font-semibold px-4 py-2 rounded-md bg-white border border-green-200 hover:bg-green-50 transition-colors flex items-center gap-2"
+                  onClick={() => setShowUserMenu((prev) => !prev)}
+                  type="button"
+                >
+                  <Icon icon="lucide:user" className="text-base mr-1" />
+                  {userName}
+                  <Icon icon="lucide:chevron-down" className="text-base" />
+                </button>
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-50"
+                      onClick={() => { setShowUserMenu(false); navigate('/registrar-producto'); }}
+                    >
+                      Registrar productos
+                    </button>
+                    {/* Puedes agregar más opciones aquí si lo deseas */}
+                  </div>
+                )}
+              </div>
             ) : (
               <button className="hidden md:block px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
-              onClick={() => navigate('/')}>
+                onClick={() => navigate('/')}
+              >
                 Iniciar Sesión
               </button>
             )}

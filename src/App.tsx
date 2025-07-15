@@ -1,6 +1,4 @@
-// src/App.tsx
-import React from 'react';
-
+// src/App.ts
 import {
   BrowserRouter as Router,
   Route,
@@ -10,6 +8,7 @@ import {
 import Catalog from './components/catalog';
 import Login from './components/loginservice';
 import Registro from './components/registrationservice';
+import RegistrationProducts from './components/RegistrationProducts';
 
 function App() {
   return (
@@ -18,6 +17,7 @@ function App() {
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Registro />} />
+        <Route path="/registrar-producto" element={<RegistrationProducts />} />
         {/* otras rutas: */}
       </Routes>
     </Router>
