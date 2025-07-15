@@ -142,7 +142,7 @@ const RegistrationProducts = () => {
                   <textarea className="form-control" name="description" value={formData.description} onChange={handleChange} required />
                 </div>
                 <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-success fw-bold" disabled={isSubmitting}>
+                  <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition">
                     {isSubmitting ? 'Registrando...' : 'Registrar Producto'}
                   </button>
                 </div>
