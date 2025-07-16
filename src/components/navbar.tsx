@@ -68,6 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
             <Icon
               icon="lucide:shopping-cart"
               className="text-lg text-gray-600"
+              onClick={() => navigate("/cart")}
             />
           </button>
           {userName ? (
