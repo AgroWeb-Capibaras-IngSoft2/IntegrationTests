@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './navbar';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Icon } from '@iconify/react';
-
-import { CategoryFilter } from './category-filter';
-import { ProductCard } from './product-card';
-
-import { useNavigate } from 'react-router-dom';
 
 // 1. Import fetchProducts and Product type
 import { fetchProducts } from '../data/product';
 import { Product } from '../types/product';
+import { CategoryFilter } from './category-filter';
+import Navbar from './navbar';
+import { ProductCard } from './product-card';
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -30,20 +31,23 @@ export default function Catalog() {
 
   const itemsPerPage = 8;
 
+
   const userName = localStorage.getItem("userName");
-  const [showUserMenu, setShowUserMenu] = useState(false);
+
 
   // 3. Fetch products from backend
   useEffect(() => {
     setLoading(true);
     fetchProducts()
-      .then(data => {
+      .then((data) => {
         setProducts(data);
         setError(null);
         setLoading(false);
       })
       .catch(() => {
-        setError("No se pudieron cargar los productos. Intenta nuevamente más tarde.");
+        setError(
+          "No se pudieron cargar los productos. Intenta nuevamente más tarde."
+        );
         setLoading(false);
       });
   }, []);
@@ -107,8 +111,8 @@ export default function Catalog() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
+
       <Navbar userName={userName} />
-     
 
       {/* Hero Banner */}
       <div className="relative w-full h-64 sm:h-80 overflow-hidden">

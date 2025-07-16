@@ -1,5 +1,4 @@
 import { desc } from 'framer-motion/client';
-
 import { useState } from 'react';
 import RegisProductImg from '/src/assets/RegisProduct.jpg';
 const RegistrationProducts = () => {

@@ -8,7 +8,6 @@ interface NavbarProps {
   userName: string | null;
 }
 
-
 const Navbar: React.FC<NavbarProps> = ({ userName }) => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = React.useState(false);
