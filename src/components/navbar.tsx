@@ -10,6 +10,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ userName }) => {
   const navigate = useNavigate();
+
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   // Cierra el menú si se hace click fuera
@@ -24,6 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [menuOpen]);
+
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 shadow-sm bg-opacity-60 backdrop-blur-lg">
@@ -69,6 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
             />
           </button>
           {userName ? (
+
             <div className="relative hidden md:flex items-center gap-2">
               <button
                 className="flex items-center p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none"
@@ -99,6 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
                 </div>
               )}
             </div>
+
           ) : (
             <button
               className="hidden md:block px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
@@ -113,4 +117,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
   );
 };
 
+
 export default Navbar;
+
