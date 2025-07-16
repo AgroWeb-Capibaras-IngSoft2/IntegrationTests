@@ -10,6 +10,20 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ userName }) => {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
+  // Cierra el menú si se hace click fuera
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      const dropdown = document.getElementById('user-dropdown-menu');
+      if (dropdown && !dropdown.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpen]);
 
   const [menuOpen, setMenuOpen] = React.useState(false);
 
@@ -68,11 +82,10 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
             <Icon
               icon="lucide:shopping-cart"
               className="text-lg text-gray-600"
-              onClick={() => navigate("/cart")}
             />
           </button>
           {userName ? (
-
+            
             <div className="relative hidden md:flex items-center gap-2">
               <button
                 className="flex items-center p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none"
@@ -106,7 +119,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
 
           ) : (
             <button
-              className="hidden md:block px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
+              className="hidden md:block px-4 py-2 bg-green-100 text-green-600 rounded-md hover:bg-green-200 transition-colors"
               onClick={() => navigate("/")}
             >
               Iniciar Sesión
@@ -117,6 +130,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
     </nav>
   );
 };
+
 
 
 export default Navbar;
