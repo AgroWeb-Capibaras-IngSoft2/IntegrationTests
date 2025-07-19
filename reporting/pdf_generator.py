@@ -393,16 +393,26 @@ class PDFReportGenerator:
         
         elements.append(Spacer(1, 0.3*inch))
         
-        # Métricas principales
+        # Extraer métricas principales desde la estructura de pytest-json-report
         summary = test_data.get("summary", {})
+        duration = test_data.get("duration", 0)
+        
+        # Calcular métricas
+        total_tests = summary.get("total", 0)
+        passed_tests = summary.get("passed", 0)
+        failed_tests = summary.get("failed", 0)
+        skipped_tests = summary.get("skipped", 0)
+        
+        # Calcular tasa de éxito
+        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
         
         metrics_data = [
             ["Métrica", "Valor", "Estado"],
-            ["Pruebas Totales", str(summary.get("total_tests", 0)), "✓"],
-            ["Pruebas Exitosas", str(summary.get("passed", 0)), "✓"],
-            ["Pruebas Fallidas", str(summary.get("failed", 0)), "⚠" if summary.get("failed", 0) > 0 else "✓"],
-            ["Tasa de Éxito", f"{summary.get('success_rate', 0):.1f}%", "✓" if summary.get('success_rate', 0) >= 90 else "⚠"],
-            ["Duración Total", f"{summary.get('duration', 0):.1f} segundos", "✓"],
+            ["Pruebas Totales", str(total_tests), "✓"],
+            ["Pruebas Exitosas", str(passed_tests), "✓"],
+            ["Pruebas Fallidas", str(failed_tests), "⚠" if failed_tests > 0 else "✓"],
+            ["Tasa de Éxito", f"{success_rate:.1f}%", "✓" if success_rate >= 90 else "⚠"],
+            ["Duración Total", f"{duration:.1f} segundos", "✓"],
         ]
         
         metrics_table = Table(metrics_data, colWidths=[2.5*inch, 1.5*inch, 1*inch])
@@ -421,7 +431,6 @@ class PDFReportGenerator:
         elements.append(Spacer(1, 0.3*inch))
         
         # Conclusión del resumen
-        success_rate = summary.get('success_rate', 0)
         if success_rate >= 95:
             conclusion = "🎯 <b>EXCELENTE:</b> El sistema demuestra alta estabilidad y confiabilidad."
         elif success_rate >= 90:
@@ -449,7 +458,19 @@ class PDFReportGenerator:
         categories = {}
         
         for test in tests:
-            test_categories = test.get("categories", ["general"])
+            # Extraer categorías desde keywords de pytest en lugar de un campo separado
+            test_keywords = test.get("keywords", [])
+            test_categories = []
+            
+            # Buscar categorías conocidas en las keywords
+            for keyword in test_keywords:
+                if keyword in ["api", "integration", "error_handling", "performance", "smoke"]:
+                    test_categories.append(keyword)
+            
+            # Si no tiene categorías específicas, usar "general"
+            if not test_categories:
+                test_categories = ["general"]
+                
             for cat in test_categories:
                 if cat not in categories:
                     categories[cat] = []
@@ -471,7 +492,19 @@ class PDFReportGenerator:
             
             for test in category_tests:
                 outcome = test.get("outcome", "unknown")
-                duration = test.get("duration", 0)
+                
+                # Extraer duración desde la estructura de pytest-json-report
+                call_data = test.get("call", {})
+                duration = call_data.get("duration", 0)
+                
+                # Extraer nombre limpio del test desde nodeid
+                test_name = test.get("nodeid", test.get("name", "Unknown"))
+                if "::" in test_name:
+                    # Formato: tests/carrito/test_api_integration.py::TestCarritoAPIIntegration::test_crear_carrito_exitoso
+                    test_name = test_name.split("::")[-1]  # Tomar solo el nombre del método
+                
+                # Limpiar el nombre del test para que sea más legible
+                clean_name = test_name.replace("test_", "").replace("_", " ").title()
                 
                 if outcome == "passed":
                     status = "✅ PASS"
@@ -484,7 +517,7 @@ class PDFReportGenerator:
                     status_color = self.colors['warning']
                 
                 table_data.append([
-                    test.get("name", "Unknown"),
+                    clean_name,
                     outcome.upper(),
                     f"{duration:.3f}",
                     status
@@ -688,10 +721,14 @@ class PDFReportGenerator:
         summary = test_data.get("summary", {})
         performance = test_data.get("performance", {})
         
+        # Calcular tasa de éxito para recomendaciones
+        total_tests = summary.get("total", 0)
+        passed_tests = summary.get("passed", 0)
+        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
+        
         recommendations = []
         
         # Recomendaciones basadas en tasa de éxito
-        success_rate = summary.get("success_rate", 0)
         if success_rate < 95:
             recommendations.append({
                 "type": "Funcionalidad",
