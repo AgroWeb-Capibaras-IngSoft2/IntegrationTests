@@ -30,7 +30,43 @@ from io import BytesIO
 import base64
 
 # Configuration
-from config.productos.test_config import TestConfig
+# from config.productos.test_config import TestConfig
+# Usar configuración genérica para reportes
+import os
+
+# Configuración local para reportes
+class ReportConfig:
+    @staticmethod
+    def ensure_report_directory():
+        """Asegurar que el directorio de reportes existe"""
+        report_dir = os.path.join(os.getcwd(), "reports")
+        os.makedirs(report_dir, exist_ok=True)
+        return report_dir
+    
+    @staticmethod
+    def get_report_timestamp():
+        """Obtener timestamp para reportes"""
+        from datetime import datetime
+        return datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    UNIVERSITY_INFO = {
+        "name": "Universidad Nacional de Colombia",
+        "faculty": "Facultad de Ingeniería",
+        "department": "Departamento de Ingeniería de Sistemas e Industrial",
+        "course": "Ingeniería de Software II",
+        "semester": "9no",
+        "project": "AgroWeb - Sistema de Gestión de Productos Agrícolas",
+        "team": "Capibaras",
+        "logo_path": "config/university_assets/logo_unal.png"
+    }
+    
+    TEST_CATEGORIES = {
+        "integration": "Pruebas de Integración",
+        "api": "Pruebas de API",
+        "carrito": "Pruebas de Carrito",
+        "productos": "Pruebas de Productos",
+        "usuarios": "Pruebas de Usuarios"
+    }
 
 logger = logging.getLogger(__name__)
 
@@ -104,21 +140,58 @@ class PDFReportGenerator:
         
         return custom
     
+    def _detect_service_from_tests(self, test_data: Dict[str, Any]) -> str:
+        """Detectar qué servicio se está probando basado en los datos de los tests"""
+        if not test_data or 'tests' not in test_data:
+            return None
+            
+        # Contar tests por servicio
+        service_counts = {
+            'Carrito': 0,
+            'Productos': 0,
+            'Usuarios': 0
+        }
+        
+        for test in test_data['tests']:
+            test_name = test.get('nodeid', '').lower()
+            
+            if 'carrito' in test_name:
+                service_counts['Carrito'] += 1
+            elif 'productos' in test_name or 'product' in test_name:
+                service_counts['Productos'] += 1
+            elif 'usuarios' in test_name or 'user' in test_name:
+                service_counts['Usuarios'] += 1
+        
+        # Retornar el servicio con más tests ejecutados
+        if any(service_counts.values()):
+            max_service = max(service_counts, key=service_counts.get)
+            if service_counts[max_service] > 0:
+                return max_service
+                
+        return None
+    
     def generate_integration_report(self, output_dir: str = None) -> str:
         """Generar reporte PDF completo de pruebas de integración"""
         
         # Configurar directorio de salida
         if not output_dir:
-            output_dir = TestConfig.ensure_report_directory()
+            output_dir = ReportConfig.ensure_report_directory()
         
-        timestamp = TestConfig.get_report_timestamp()
-        filename = f"AgroWeb_Integration_Report_{timestamp}.pdf"
+        timestamp = ReportConfig.get_report_timestamp()
+        
+        # Cargar datos de pruebas para detectar el servicio
+        test_data = self._load_test_results()
+        service_name = self._detect_service_from_tests(test_data)
+        
+        # Generar nombre de archivo basado en el servicio
+        if service_name:
+            filename = f"AgroWeb_{service_name}_Integration_Report_{timestamp}.pdf"
+        else:
+            filename = f"AgroWeb_Integration_Report_{timestamp}.pdf"
+            
         filepath = os.path.join(output_dir, filename)
         
-        logger.info(f"📄 Generando reporte PDF: {filepath}")
-        
-        # Cargar datos de pruebas
-        test_data = self._load_test_results()
+        logger.info(f"📄 Generando reporte PDF para servicio '{service_name}': {filepath}")
         
         # Crear documento PDF
         doc = SimpleDocTemplate(
@@ -134,7 +207,7 @@ class PDFReportGenerator:
         story = []
         
         # Página de portada
-        story.extend(self._create_cover_page())
+        story.extend(self._create_cover_page(service_name))
         story.append(PageBreak())
         
         # Resumen ejecutivo
@@ -237,12 +310,12 @@ class PDFReportGenerator:
             }
         }
     
-    def _create_cover_page(self) -> List:
+    def _create_cover_page(self, service_name: str = None) -> List:
         """Crear página de portada con información universitaria"""
         elements = []
         
         # Logo universitario (si existe)
-        logo_path = TestConfig.UNIVERSITY_INFO["logo_path"]
+        logo_path = ReportConfig.UNIVERSITY_INFO["logo_path"]
         if os.path.exists(logo_path):
             try:
                 logo = Image(logo_path, width=2*inch, height=2*inch)
@@ -254,11 +327,11 @@ class PDFReportGenerator:
         
         # Información universitaria
         university_info = [
-            TestConfig.UNIVERSITY_INFO["name"],
-            TestConfig.UNIVERSITY_INFO["faculty"],
-            TestConfig.UNIVERSITY_INFO["department"],
-            TestConfig.UNIVERSITY_INFO["course"],
-            f"Semestre {TestConfig.UNIVERSITY_INFO['semester']}"
+            ReportConfig.UNIVERSITY_INFO["name"],
+            ReportConfig.UNIVERSITY_INFO["faculty"],
+            ReportConfig.UNIVERSITY_INFO["department"],
+            ReportConfig.UNIVERSITY_INFO["course"],
+            f"Semestre {ReportConfig.UNIVERSITY_INFO['semester']}"
         ]
         
         for info in university_info:
@@ -269,14 +342,19 @@ class PDFReportGenerator:
         
         # Título del proyecto
         title = Paragraph(
-            TestConfig.UNIVERSITY_INFO["project"],
+            ReportConfig.UNIVERSITY_INFO["project"],
             self.custom_styles['title']
         )
         elements.append(title)
         
         # Subtítulo del reporte
+        if service_name:
+            subtitle_text = f"Reporte de Pruebas de Integración - Servicio {service_name}"
+        else:
+            subtitle_text = "Reporte de Pruebas de Integración"
+            
         subtitle = Paragraph(
-            "Reporte de Pruebas de Integración",
+            subtitle_text,
             self.custom_styles['subtitle']
         )
         elements.append(subtitle)
@@ -285,7 +363,7 @@ class PDFReportGenerator:
         
         # Información del equipo y fecha
         team_info = [
-            f"<b>Equipo:</b> {TestConfig.UNIVERSITY_INFO['team']}",
+            f"<b>Equipo:</b> {ReportConfig.UNIVERSITY_INFO['team']}",
             f"<b>Fecha de Generación:</b> {datetime.now().strftime('%d de %B de %Y')}",
             f"<b>Hora:</b> {datetime.now().strftime('%H:%M:%S')}"
         ]
@@ -379,7 +457,7 @@ class PDFReportGenerator:
         
         # Crear tabla para cada categoría
         for category, category_tests in categories.items():
-            cat_title = Paragraph(f"Categoría: {TestConfig.TEST_CATEGORIES.get(category, category)}", 
+            cat_title = Paragraph(f"Categoría: {ReportConfig.TEST_CATEGORIES.get(category, category)}", 
                                  self.custom_styles['body'])
             elements.append(cat_title)
             
