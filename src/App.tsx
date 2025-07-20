@@ -10,6 +10,7 @@ import Catalog from './components/catalog';
 import Login from './components/loginservice';
 import Registro from './components/registrationservice';
 import RegistrationProducts from './components/RegistrationProducts';
+import Dashboard from './components/dashboard/Dashboard';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signup" element={<Registro />} />
         <Route path="/registrar-producto" element={<RegistrationProducts />} />
         <Route path="/cart" element={<Cart />} />
+         <Route path="/dashboard" element={<Dashboard />} />
 
         {/* otras rutas: */}
       </Routes>
