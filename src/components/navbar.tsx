@@ -66,6 +66,7 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
             <Icon
               icon="lucide:shopping-cart"
               className="text-lg text-gray-600"
+              onClick={() => navigate('/cart')}
             />
           </button>
           {userName ? (
@@ -84,18 +85,39 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
               {menuOpen && (
                 <div
                   id="user-dropdown-menu"
-                  className="absolute right-0 top-10 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                  className="absolute left-1/2 -translate-x-1/2 top-10 mt-2 w-52 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 p-2"
                 >
                   <button
-                    className="block w-full text-left px-4 py-2 text-sm text-green-700 hover:bg-green-50"
+                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-base font-medium text-green-800 bg-gradient-to-r from-green-100 to-green-50 rounded-xl shadow-sm hover:from-green-200 hover:to-green-100 hover:shadow-md transition-all duration-200 mb-2"
                     onClick={() => {
                       navigate('/registrar-producto');
                       setMenuOpen(false);
                     }}
                   >
+                    <Icon icon="lucide:plus-circle" className="text-green-500 text-lg" />
                     Registrar productos
                   </button>
-                  {/* Puedes agregar más opciones aquí si lo deseas */}
+                  <button
+                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-base font-medium text-green-800 bg-gradient-to-r from-green-100 to-green-50 rounded-xl shadow-sm hover:from-green-200 hover:to-green-100 hover:shadow-md transition-all duration-200 mt-2"
+                    onClick={() => {
+                      navigate('/dashboard');
+                      setMenuOpen(false);
+                    }}
+                  >
+                    <Icon icon="lucide:bar-chart-3" className="text-green-500 text-lg" />
+                    Dashboard de estadísticas
+                  </button>
+                  <button
+                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-base font-medium text-green-800 bg-gradient-to-r from-green-100 to-green-50 rounded-xl shadow-sm hover:from-green-200 hover:to-green-100 hover:shadow-md transition-all duration-200 mt-2"
+                    onClick={() => {
+                      navigate('/')
+                      // logica para cerrar sesión
+                    
+                    }}
+                    >
+                    <Icon icon="lucide:log-out" className="text-green-500 text-lg" />
+                    Cerrar sesión
+                    </button>
                 </div>
               )}
             </div>

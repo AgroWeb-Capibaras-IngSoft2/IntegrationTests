@@ -46,7 +46,6 @@ const Registro = () => {
     { label: 'Municipio', name: 'municipio' },
     { label: 'Ruta', name: 'ruta' },
     { label: 'Correo electrónico', name: 'correo', type: 'email' },
-    // { label: 'Número de documento', name: 'numeroDocumento' }, // Eliminado para evitar duplicado
     { label: 'Número de teléfono', name: 'telefono' },
     { label: 'Nombre de usuario', name: 'nombreUsuario' },
     { label: 'Contraseña', name: 'contrasena', type: 'password' },
