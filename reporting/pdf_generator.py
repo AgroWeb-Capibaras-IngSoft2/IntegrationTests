@@ -555,21 +555,37 @@ class PDFReportGenerator:
         
         # Texto introductorio
         intro = Paragraph(
-            "El análisis de rendimiento evalúa los tiempos de respuesta de cada endpoint "
-            "contra los umbrales establecidos para garantizar una experiencia de usuario óptima.",
+            "El análisis de rendimiento evalúa la duración de ejecución de cada test "
+            "para identificar operaciones lentas que puedan afectar la experiencia del usuario.",
             self.custom_styles['body']
         )
         elements.append(intro)
         elements.append(Spacer(1, 0.2*inch))
         
-        # Datos de rendimiento
-        performance = test_data.get("performance", {})
-        response_times = performance.get("response_times", {})
-        thresholds = performance.get("thresholds", {})
+        # Extraer datos reales de duración de tests
+        tests = test_data.get("tests", [])
+        test_durations = {}
         
-        if response_times:
-            # Crear gráfico de rendimiento usando matplotlib
-            chart_path = self._create_performance_chart(response_times, thresholds)
+        for test in tests:
+            # Extraer nombre limpio del test
+            test_name = test.get("nodeid", test.get("name", "Unknown"))
+            if "::" in test_name:
+                test_name = test_name.split("::")[-1]  # Tomar solo el nombre del método
+            clean_name = test_name.replace("test_", "").replace("_", " ").title()
+            
+            # Extraer duración desde la estructura de pytest-json-report
+            call_data = test.get("call", {})
+            duration = call_data.get("duration", 0)
+            
+            if duration > 0:  # Solo incluir tests con duración válida
+                test_durations[clean_name] = duration * 1000  # Convertir a milisegundos
+        
+        # Detectar servicio para nombres únicos
+        service_name = self._detect_service_from_tests(test_data)
+        
+        if test_durations:
+            # Crear gráfico de duración de tests
+            chart_path = self._create_test_duration_chart(test_durations, service_name)
             if chart_path and os.path.exists(chart_path):
                 try:
                     chart_img = Image(chart_path, width=6*inch, height=4*inch)
@@ -579,38 +595,138 @@ class PDFReportGenerator:
                 except:
                     logger.warning("No se pudo incluir gráfico de rendimiento")
             
-            # Tabla de métricas de rendimiento
-            perf_data = [["Endpoint", "Promedio (ms)", "Umbral (ms)", "Estado"]]
+            # Tabla de métricas de rendimiento basada en datos reales
+            perf_data = [["Test", "Duración (ms)", "Clasificación", "Estado"]]
             
-            for endpoint, times in response_times.items():
-                avg_time = np.mean(times) if times else 0
-                threshold = thresholds.get(endpoint, 200)
-                
-                status = "✅ RÁPIDO" if avg_time <= threshold else "⚠️ LENTO"
+            # Definir umbrales para clasificación
+            for test_name, duration_ms in test_durations.items():
+                if duration_ms < 100:
+                    classification = "Muy Rápido"
+                    status = "✅ EXCELENTE"
+                elif duration_ms < 500:
+                    classification = "Rápido"
+                    status = "✅ BUENO"
+                elif duration_ms < 2000:
+                    classification = "Moderado"
+                    status = "⚠️ ACEPTABLE"
+                else:
+                    classification = "Lento"
+                    status = "❌ LENTO"
                 
                 perf_data.append([
-                    endpoint.replace("_", " ").title(),
-                    f"{avg_time:.1f}",
-                    f"{threshold}",
+                    test_name,
+                    f"{duration_ms:.1f}",
+                    classification,
                     status
                 ])
             
-            perf_table = Table(perf_data, colWidths=[2*inch, 1.5*inch, 1.5*inch, 1.5*inch])
+            # Ordenar por duración (más lento primero)
+            perf_data[1:] = sorted(perf_data[1:], key=lambda x: float(x[1]), reverse=True)
+            
+            perf_table = Table(perf_data, colWidths=[2.5*inch, 1.2*inch, 1.3*inch, 1.5*inch])
             perf_table.setStyle(TableStyle([
                 ('BACKGROUND', (0, 0), (-1, 0), self.colors['primary']),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
                 ('BACKGROUND', (0, 1), (-1, -1), self.colors['light_blue']),
                 ('GRID', (0, 0), (-1, -1), 1, colors.black)
             ]))
             
             elements.append(perf_table)
+            
+            # Estadísticas de rendimiento
+            total_duration = sum(test_durations.values())
+            avg_duration = total_duration / len(test_durations)
+            slow_tests = len([d for d in test_durations.values() if d > 2000])
+            
+            stats_text = f"""
+            <b>Estadísticas de Rendimiento:</b><br/>
+            • Duración total de tests: {total_duration:.1f} ms<br/>
+            • Duración promedio por test: {avg_duration:.1f} ms<br/>
+            • Tests lentos (>2s): {slow_tests} de {len(test_durations)}<br/>
+            • Test más rápido: {min(test_durations.values()):.1f} ms<br/>
+            • Test más lento: {max(test_durations.values()):.1f} ms
+            """
+            stats = Paragraph(stats_text, self.custom_styles['body'])
+            elements.append(stats)
+        else:
+            # Si no hay datos de duración, mostrar mensaje informativo
+            no_data = Paragraph(
+                "No se encontraron datos de duración de tests en esta ejecución.",
+                self.custom_styles['body']
+            )
+            elements.append(no_data)
         
         return elements
     
-    def _create_performance_chart(self, response_times: Dict, thresholds: Dict) -> str:
+    def _create_test_duration_chart(self, test_durations: Dict, service_name: str = None) -> str:
+        """Crear gráfico de duración de tests con matplotlib"""
+        try:
+            plt.style.use('seaborn-v0_8')
+            fig, ax = plt.subplots(figsize=(12, 8))
+            
+            # Preparar datos
+            test_names = list(test_durations.keys())
+            durations = list(test_durations.values())
+            
+            # Colores basados en duración
+            bar_colors = []
+            for duration in durations:
+                if duration < 100:
+                    bar_colors.append('#2ECC71')  # Verde - Muy rápido
+                elif duration < 500:
+                    bar_colors.append('#3498DB')  # Azul - Rápido
+                elif duration < 2000:
+                    bar_colors.append('#F39C12')  # Naranja - Moderado
+                else:
+                    bar_colors.append('#E74C3C')  # Rojo - Lento
+            
+            # Crear gráfico de barras horizontal
+            y_pos = np.arange(len(test_names))
+            bars = ax.barh(y_pos, durations, color=bar_colors, alpha=0.8)
+            
+            # Configurar ejes
+            ax.set_yticks(y_pos)
+            ax.set_yticklabels(test_names, fontsize=9)
+            ax.set_xlabel('Duración (ms)', fontsize=12, fontweight='bold')
+            ax.set_title(f'Duración de Tests - {service_name or "Servicio"}', fontsize=14, fontweight='bold')
+            
+            # Añadir valores en las barras
+            for i, (bar, duration) in enumerate(zip(bars, durations)):
+                width = bar.get_width()
+                ax.text(width + max(durations) * 0.01, bar.get_y() + bar.get_height()/2,
+                       f'{duration:.1f}ms', ha='left', va='center', fontsize=8)
+            
+            # Añadir líneas de referencia
+            ax.axvline(x=100, color='green', linestyle='--', alpha=0.5, label='Muy Rápido (<100ms)')
+            ax.axvline(x=500, color='blue', linestyle='--', alpha=0.5, label='Rápido (<500ms)')
+            ax.axvline(x=2000, color='orange', linestyle='--', alpha=0.5, label='Aceptable (<2s)')
+            
+            # Configurar leyenda
+            ax.legend(loc='lower right', fontsize=9)
+            
+            # Invertir el eje Y para mostrar tests en orden descendente de duración
+            ax.invert_yaxis()
+            
+            plt.tight_layout()
+            
+            # Guardar gráfico con nombre único
+            timestamp = ReportConfig.get_report_timestamp()
+            service_suffix = f"_{service_name}" if service_name else ""
+            chart_filename = f"test_duration_chart{service_suffix}_{timestamp}.png"
+            chart_path = os.path.join("reports", chart_filename)
+            plt.savefig(chart_path, dpi=300, bbox_inches='tight', facecolor='white')
+            plt.close()
+            
+            return chart_path
+            
+        except Exception as e:
+            logger.error(f"Error creando gráfico de duración de tests: {e}")
+            return None
+
+    def _create_performance_chart(self, response_times: Dict, thresholds: Dict, service_name: str = None) -> str:
         """Crear gráfico de rendimiento con matplotlib"""
         try:
             plt.style.use('seaborn-v0_8')
@@ -641,8 +757,11 @@ class PDFReportGenerator:
             
             plt.tight_layout()
             
-            # Guardar gráfico
-            chart_path = os.path.join("reports", "performance_chart.png")
+            # Guardar gráfico con nombre único por servicio y timestamp
+            timestamp = ReportConfig.get_report_timestamp()
+            service_suffix = f"_{service_name}" if service_name else ""
+            chart_filename = f"performance_chart{service_suffix}_{timestamp}.png"
+            chart_path = os.path.join("reports", chart_filename)
             plt.savefig(chart_path, dpi=300, bbox_inches='tight')
             plt.close()
             

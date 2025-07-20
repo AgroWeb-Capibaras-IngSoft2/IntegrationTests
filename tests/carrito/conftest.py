@@ -40,7 +40,7 @@ def carrito_api_health_check(carrito_api_client, carrito_api_base_url):
             # Como no tenemos /health, usamos cualquier endpoint
             response = carrito_api_client.get(f"{carrito_api_base_url}/carrito/getCarrito/test")
             # Si responde (aunque sea 404), el servicio está arriba
-            if response.status_code in [200, 404, 400]:
+            if response.status_code in [200, 201, 404, 400]:
                 logger.info(f"✅ API de Carrito disponible en {carrito_api_base_url}")
                 return True
             else:
@@ -127,7 +127,7 @@ def sample_test_data():
         },
         "invalid_carrito_id": "999999",
         "invalid_product_id": "PROD-INEXISTENTE123",
-        "invalid_user": {"userdocument": "12345678", "doctype": "TI"}  # Tipo inválido
+        "invalid_user": {"userDocument": "12345678", "docType": "TI"}  # Tipo inválido
     }
 
 def pytest_configure(config):
