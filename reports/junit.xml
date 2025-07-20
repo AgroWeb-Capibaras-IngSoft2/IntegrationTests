@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="10" time="80.524" timestamp="2025-07-19T20:50:46.676758-05:00" hostname="DESKTOP-RDK27V2"><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_crear_carrito_exitoso" time="9.014" /><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_agregar_producto_a_carrito" time="10.785"><failure message="AssertionError: Agregar producto muy lento: 6169.80ms (max: 400ms)&#10;assert 6169.804573059082 &lt;= 400">tests\carrito\test_api_integration.py:145: in test_agregar_producto_a_carrito
+    assert response_time &lt;= threshold, f"Agregar producto muy lento: {response_time:.2f}ms (max: {threshold}ms)"
+E   AssertionError: Agregar producto muy lento: 6169.80ms (max: 400ms)
+E   assert 6169.804573059082 &lt;= 400</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_obtener_carrito_exitoso" time="4.609"><failure message="AssertionError: Error obteniendo carrito: 201 - {&#10;    &quot;Success&quot;: true,&#10;    &quot;resul&quot;: {&#10;      &quot;id_carrito&quot;: 1,&#10;      &quot;items&quot;: [&#10;        {&#10;          &quot;cantidad&quot;: 3,&#10;          &quot;medida&quot;: &quot;LB&quot;,&#10;          &quot;product_id&quot;: &quot;PROD-577D6765&quot;,&#10;          &quot;product_name&quot;: &quot;Arroz&quot;,&#10;          &quot;total_prod&quot;: &quot;8100.00&quot;&#10;        },&#10;        {&#10;          &quot;cantidad&quot;: 3,&#10;          &quot;medida&quot;: &quot;LB&quot;,&#10;          &quot;product_id&quot;: &quot;PROD-661AA7F9&quot;,&#10;          &quot;product_name&quot;: &quot;Lechuga&quot;,&#10;          &quot;total_prod&quot;: &quot;18000.00&quot;&#10;        },&#10;        {&#10;          &quot;cantidad&quot;: 10,&#10;          &quot;medida&quot;: &quot;250g&quot;,&#10;          &quot;product_id&quot;: &quot;PROD-E0B41C01&quot;,&#10;          &quot;product_name&quot;: &quot;Tomate&quot;,&#10;          &quot;total_prod&quot;: &quot;30000.00&quot;&#10;        }&#10;      ],&#10;      &quot;total&quot;: &quot;56100.00&quot;&#10;    }&#10;  }&#10;  &#10;assert 201 == 200&#10; +  where 201 = &lt;Response [201]&gt;.status_code">tests\carrito\test_api_integration.py:170: in test_obtener_carrito_exitoso
+    assert response.status_code == 200, f"Error obteniendo carrito: {response.status_code} - {response.text}"
+E   AssertionError: Error obteniendo carrito: 201 - {
+E       "Success": true,
+E       "resul": {
+E         "id_carrito": 1,
+E         "items": [
+E           {
+E             "cantidad": 3,
+E             "medida": "LB",
+E             "product_id": "PROD-577D6765",
+E             "product_name": "Arroz",
+E             "total_prod": "8100.00"
+E           },
+E           {
+E             "cantidad": 3,
+E             "medida": "LB",
+E             "product_id": "PROD-661AA7F9",
+E             "product_name": "Lechuga",
+E             "total_prod": "18000.00"
+E           },
+E           {
+E             "cantidad": 10,
+E             "medida": "250g",
+E             "product_id": "PROD-E0B41C01",
+E             "product_name": "Tomate",
+E             "total_prod": "30000.00"
+E           }
+E         ],
+E         "total": "56100.00"
+E       }
+E     }
+E     
+E   assert 201 == 200
+E    +  where 201 = &lt;Response [201]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_cambiar_cantidad_producto" time="14.323"><failure message="AssertionError: Error cambiando cantidad: 500 - {&#10;    &quot;Success&quot;: false,&#10;    &quot;message&quot;: &quot;HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /products/PROD-577D6765 (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0x0000018E1329E580&gt;: Failed to establish a new connection: [WinError 10061] No se puede establecer una conexi\u00f3n ya que el equipo de destino deneg\u00f3 expresamente dicha conexi\u00f3n'))&quot;&#10;  }&#10;  &#10;assert 500 == 200&#10; +  where 500 = &lt;Response [500]&gt;.status_code">tests\carrito\test_api_integration.py:232: in test_cambiar_cantidad_producto
+    assert response.status_code == 200, f"Error cambiando cantidad: {response.status_code} - {response.text}"
+E   AssertionError: Error cambiando cantidad: 500 - {
+E       "Success": false,
+E       "message": "HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /products/PROD-577D6765 (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0x0000018E1329E580&gt;: Failed to establish a new connection: [WinError 10061] No se puede establecer una conexi\u00f3n ya que el equipo de destino deneg\u00f3 expresamente dicha conexi\u00f3n'))"
+E     }
+E     
+E   assert 500 == 200
+E    +  where 500 = &lt;Response [500]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_vaciar_carrito_exitoso" time="10.254"><failure message="AssertionError: Error vaciando carrito: 400 - {&#10;    &quot;Success&quot;: false,&#10;    &quot;message&quot;: &quot;No se ha enviado un id de carrito para procesar la solicitud&quot;&#10;  }&#10;  &#10;assert 400 == 200&#10; +  where 400 = &lt;Response [400]&gt;.status_code">tests\carrito\test_api_integration.py:269: in test_vaciar_carrito_exitoso
+    assert response.status_code == 200, f"Error vaciando carrito: {response.status_code} - {response.text}"
+E   AssertionError: Error vaciando carrito: 400 - {
+E       "Success": false,
+E       "message": "No se ha enviado un id de carrito para procesar la solicitud"
+E     }
+E     
+E   assert 400 == 200
+E    +  where 400 = &lt;Response [400]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_obtener_carrito_inexistente" time="2.548"><failure message="AssertionError: Debería retornar 404 para carrito inexistente, obtuvo: 201&#10;assert 201 == 404&#10; +  where 201 = &lt;Response [201]&gt;.status_code">tests\carrito\test_api_integration.py:297: in test_obtener_carrito_inexistente
+    assert response.status_code == 404, f"Debería retornar 404 para carrito inexistente, obtuvo: {response.status_code}"
+E   AssertionError: Debería retornar 404 para carrito inexistente, obtuvo: 201
+E   assert 201 == 404
+E    +  where 201 = &lt;Response [201]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_agregar_producto_carrito_inexistente" time="6.169"><failure message="AssertionError: Debería fallar con 400/404/500, obtuvo: 200&#10;assert 200 in [400, 404, 500]&#10; +  where 200 = &lt;Response [200]&gt;.status_code">tests\carrito\test_api_integration.py:323: in test_agregar_producto_carrito_inexistente
+    assert response.status_code in [400, 404, 500], f"Debería fallar con 400/404/500, obtuvo: {response.status_code}"
+E   AssertionError: Debería fallar con 400/404/500, obtuvo: 200
+E   assert 200 in [400, 404, 500]
+E    +  where 200 = &lt;Response [200]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_datos_invalidos_crear_carrito" time="3.214"><failure message="AssertionError: Debería fallar con 400/422/500, obtuvo: 200&#10;assert 200 in [400, 422, 500]&#10; +  where 200 = &lt;Response [200]&gt;.status_code">tests\carrito\test_api_integration.py:346: in test_datos_invalidos_crear_carrito
+    assert response.status_code in [400, 422, 500], f"Debería fallar con 400/422/500, obtuvo: {response.status_code}"
+E   AssertionError: Debería fallar con 400/422/500, obtuvo: 200
+E   assert 200 in [400, 422, 500]
+E    +  where 200 = &lt;Response [200]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_crear_carrito_campos_faltantes" time="2.543"><failure message="AssertionError: Debería fallar con 400/422/500, obtuvo: 200&#10;assert 200 in [400, 422, 500]&#10; +  where 200 = &lt;Response [200]&gt;.status_code">tests\carrito\test_api_integration.py:376: in test_crear_carrito_campos_faltantes
+    assert response.status_code in [400, 422, 500], f"Debería fallar con 400/422/500, obtuvo: {response.status_code}"
+E   AssertionError: Debería fallar con 400/422/500, obtuvo: 200
+E   assert 200 in [400, 422, 500]
+E    +  where 200 = &lt;Response [200]&gt;.status_code</failure></testcase><testcase classname="tests.carrito.test_api_integration.TestCarritoAPIIntegration" name="test_flujo_completo_carrito" time="16.643"><failure message="AssertionError: Error cambiando cantidad: 500&#10;assert 500 == 200&#10; +  where 500 = &lt;Response [500]&gt;.status_code">tests\carrito\test_api_integration.py:418: in test_flujo_completo_carrito
+    assert change_response.status_code == 200, f"Error cambiando cantidad: {change_response.status_code}"
+E   AssertionError: Error cambiando cantidad: 500
+E   assert 500 == 200
+E    +  where 500 = &lt;Response [500]&gt;.status_code</failure></testcase></testsuite></testsuites>
