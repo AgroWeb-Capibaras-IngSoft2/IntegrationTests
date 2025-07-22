@@ -5,7 +5,8 @@ import Navbar from '../navbar';
 import { CartItem } from './CartItem';
 import { CartSummary } from './CartSummary';
 import type { CartItem as CartItemBack } from '../../services/cartservices'; 
-
+import { getCarritoItems } from '../../services/cartservices';
+import { updateCartItem,removeCartItem } from '../../services/cartservices';
 interface Item {
   id: number;
   name: string;
@@ -19,45 +20,119 @@ const transformCartItemToItem=(cartItem:CartItemBack):Item=>({
   id:cartItem.product_id,
   name:cartItem.product_name,
   price:cartItem.total_prod,
-  quantity:cartItem.total_prod,
-  image
-})
-
-const initialCartItems: Item[] = [
-  {
-    id: 1,
-    name: "Router, Access Point, Repetidor, Wds Bridge, Ten...",
-    price: 60000,
-    quantity: 1,
-    image: "https://img.heroui.chat/image/fashion?w=200&h=200&u=1",
-    checked: true,
-  },
-  {
-    id: 2,
-    name: "Funda Forro Portatil De Lujo",
-    price: 43900,
-    quantity: 1,
-    image: "https://img.heroui.chat/image/fashion?w=200&h=200&u=2",
-    checked: true,
-  },
-];
+  quantity:cartItem.cantidad,
+  image:cartItem.image || "/static/default.jpg",
+  checked:true
+});
 
 export default function Cart() {
-  const [items, setItems] = React.useState<Item[]>(initialCartItems);
+  
+  //Agregamos los items:
+  const [items, setItems] = React.useState<Item[]>([]);
+  const[loading,setLoading]=React.useState(true);
+  const [error,setError]= React.useState<string | null>(null);
+
+  React.useEffect(()=>{
+    const loadCartItems =async()=>{
+      try{
+        const carritoId=localStorage.getItem('carritoId');
+        if(!carritoId){
+          setError('No se encontro el carrito del usuario');
+          return;
+        }
+        const backendItems=await getCarritoItems(carritoId);
+        const transformedItems= backendItems.map(transformCartItemToItem);
+        setItems(transformedItems);
+      }catch(error){
+        console.error("Error cargando carrito: ",error);
+        setError('Error al cargar el carrito');
+      }finally{
+        setLoading(false);
+      }
+    };
+
+    loadCartItems();
+  },[]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#EBEBEB]">
+        <Navbar userName={null} />
+        <div className="max-w-7xl mx-auto p-4 md:p-8">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <p>Cargando carrito...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#EBEBEB]">
+        <Navbar userName={null} />
+        <div className="max-w-7xl mx-auto p-4 md:p-8">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <p className="text-red-500">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Después del useEffect, agregar esta validación:
+if (items.length === 0 && !loading && !error) {
+  return (
+    <div className="min-h-screen bg-[#EBEBEB]">
+      <Navbar userName={null} />
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <Icon icon="lucide:shopping-cart" className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+          <h3 className="text-xl font-semibold text-gray-600 mb-2">
+            Tu carrito está vacío
+          </h3>
+          <p className="text-gray-500 mb-6">
+            ¡Agrega algunos productos para comenzar a comprar!
+          </p>
+          <button 
+            onClick={() => window.location.href = '/catalog'}
+            className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
+          >
+            Ir al catálogo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   // Toggle quantity
-  const updateQuantity = (id: number, newQuantity: number) => {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+  const updateQuantity = async(id: number, newQuantity: number) => {
+    const carritoId=localStorage.getItem('carritoId');
+    if(!carritoId) return;
+    try {
+      await updateCartItem(carritoId, id.toString(), newQuantity);
+      const backendItems = await getCarritoItems(carritoId);
+      const transformedItems = backendItems.map(transformCartItemToItem);
+      setItems(transformedItems);
+  } catch (error) {
+    alert('Error actualizando cantidad');
+  }
   };
 
   // Remove item
-  const removeItem = (id: number) => {
-    setItems(items.filter((item) => item.id !== id));
-  };
+  const removeItem = async (id: number) => {
+  const carritoId = localStorage.getItem('carritoId');
+  if (!carritoId) return;
+  try {
+    await removeCartItem(carritoId, id.toString());
+    const backendItems = await getCarritoItems(carritoId);
+    const transformedItems = backendItems.map(transformCartItemToItem);
+    setItems(transformedItems);
+  } catch (error) {
+    alert('Error eliminando producto');
+  }
+};
 
   // Toggle individual checked state
   const updateChecked = (id: number, checked: boolean) => {

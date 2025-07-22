@@ -35,39 +35,42 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
         </div>
 
         <div className="hidden md:flex space-x-6">
-          <a
-            href="#"
+          <button
+            onClick={()=>navigate('/')}
             className="text-gray-700 hover:text-gray-900 transition-colors"
           >
             Home
-          </a>
-          <a
-            href="#"
+          </button>
+          <button
+            onClick={()=>navigate('/catalog')}
             className="text-green-600 font-medium"
             aria-current="page"
           >
             Catalogo
-          </a>
-          <a
-            href="#"
+          </button>
+          <button
+            onClick={()=> navigate("/about")}
             className="text-gray-700 hover:text-gray-900 transition-colors"
           >
             Acerca de Nosotros
-          </a>
-          <a
-            href="#"
+          </button>
+          <button
+            onClick={()=> navigate('/contact')}
             className="text-gray-700 hover:text-gray-900 transition-colors"
           >
             Contacto
-          </a>
+          </button>
         </div>
 
         <div className="flex items-center space-x-4">
-          <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+
+          <button 
+          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          onClick={()=>navigate('/cart')}
+          >
             <Icon
               icon="lucide:shopping-cart"
               className="text-lg text-gray-600"
-              onClick={() => navigate('/cart')}
             />
           </button>
           {userName ? (
