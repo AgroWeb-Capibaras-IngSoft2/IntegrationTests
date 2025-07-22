@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import Navbar from '../navbar';
 import { CartItem } from './CartItem';
 import { CartSummary } from './CartSummary';
+import type { CartItem as CartItemBack } from '../../services/cartservices'; 
 
 interface Item {
   id: number;
@@ -13,6 +14,14 @@ interface Item {
   image: string;
   checked: boolean;
 }
+
+const transformCartItemToItem=(cartItem:CartItemBack):Item=>({
+  id:cartItem.product_id,
+  name:cartItem.product_name,
+  price:cartItem.total_prod,
+  quantity:cartItem.total_prod,
+  image
+})
 
 const initialCartItems: Item[] = [
   {

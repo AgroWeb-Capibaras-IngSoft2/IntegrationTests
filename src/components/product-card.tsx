@@ -3,6 +3,9 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 
 import { Product } from '../types/product';
+import { addProduct } from '../services/cartservices';
+
+
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +14,23 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const [imgError, setImgError] = React.useState(false);
+
+//Función para manejar el click de agregar producto
+  const handleAddToCart= async ()=>{
+  try{
+    const carritoId=localStorage.getItem("carritoId");
+    if(!carritoId){
+      alert("Debes iniciar sesión para agregar productos al carrito");
+      return
+    }
+
+    await addProduct(carritoId,product.productId,1);
+    alert ("Producto agregado al carrito");
+  }catch(error){
+    console.error("Error: ",error);
+    alert("Error al agregar producto al carrito");
+  }
+};
 
   return (
     <div
@@ -52,7 +72,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             isHovered ? "opacity-100" : "opacity-0"
           }`}
         >
-          <button className="flex items-center gap-2 px-4 py-2 font-medium rounded-md bg-green-500 text-white hover:bg-green-600 transition-colors">
+          <button 
+          onClick={handleAddToCart}
+          className="flex items-center gap-2 px-4 py-2 font-medium rounded-md bg-green-500 text-white hover:bg-green-600 transition-colors">
             Añadir al carrito
             <Icon icon="lucide:shopping-cart" />
           </button>
