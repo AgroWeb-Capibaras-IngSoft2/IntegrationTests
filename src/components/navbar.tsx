@@ -25,21 +25,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName }) => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [menuOpen]);
 
-  const [menuOpen, setMenuOpen] = React.useState(false);
-
-  // Cierra el menú si se hace click fuera
-  React.useEffect(() => {
-    if (!menuOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      const dropdown = document.getElementById('user-dropdown-menu');
-      if (dropdown && !dropdown.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
-
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 shadow-sm bg-opacity-60 backdrop-blur-lg">

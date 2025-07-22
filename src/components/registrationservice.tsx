@@ -5,6 +5,7 @@ import RegisImg from '/src/assets/Regis.jpg';
 import iconimg from '/src/assets/icon.png';
 import bcrypt from 'bcryptjs';
 import '../index.css'; // Asegura que el CSS global se importe
+import { crearCarrito } from '../services/cartservices';
 
 const usersApiUrl = import.meta.env.VITE_API_USERS_URL;
 
@@ -101,6 +102,17 @@ const Registro = () => {
 
     if (response.ok) {
       const data = await response.json();
+      try{
+        const carritoResponse= await crearCarrito(formData.numeroDocumento,formData.tipoDocumento);
+        console.log('Carrito creado: ',carritoResponse);
+        if(carritoResponse?.id_carrito){
+          localStorage.setItem('carritoId',carritoResponse.id_carrito.toString());
+        }
+      }catch(error){
+        console.error("Error creando carrito: ",error);
+        alert("No se pudo crear un carrito de compras")
+      }
+      
       alert('¡Registro exitoso!');
       console.log('Respuesta del servidor:', data);
       navigate('/');
@@ -111,7 +123,6 @@ const Registro = () => {
   } catch (error) {
     alert('Error de red: ' + error.message);
   }
-
 
   };
 
