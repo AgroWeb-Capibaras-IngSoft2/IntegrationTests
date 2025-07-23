@@ -1,4 +1,4 @@
-import { desc } from 'framer-motion/client';
+import React from 'react';
 import { useState } from 'react';
 import RegisProductImg from '/src/assets/RegisProduct.jpg';
 const RegistrationProducts = () => {
@@ -98,7 +98,24 @@ const RegistrationProducts = () => {
                   </div>
                   <div className="mb-3 col-md-6">
                     <label className="form-label">Categoría</label>
-                    <input type="text" className="form-control" name="caterogy" value={formData.caterogy} onChange={handleChange} required />
+                    <select
+                      className="form-select rounded-pill shadow-sm px-3 py-2"
+                      name="caterogy"
+                      value={formData.caterogy}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="Frutas">Frutas</option>
+                      <option value="Verduras">Verduras</option>
+                      <option value="Lácteos">Lácteos</option>
+                      <option value="Carnes">Carnes</option>
+                      <option value="Bebidas">Bebidas</option>
+                      <option value="Cereales">Cereales</option>
+                      <option value="Especias">Especias</option>
+                      <option value="Huevos">Huevos</option>
+                      <option value="Otros">Otros</option>
+                    </select>
                   </div>
                 </div>
                 <div className="row">

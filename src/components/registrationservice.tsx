@@ -5,7 +5,6 @@ import RegisImg from '/src/assets/Regis.jpg';
 import iconimg from '/src/assets/icon.png';
 import bcrypt from 'bcryptjs';
 import '../index.css'; // Asegura que el CSS global se importe
-import { crearCarrito } from '../services/cartservices';
 
 const usersApiUrl = import.meta.env.VITE_API_USERS_URL;
 
@@ -28,6 +27,7 @@ const Registro = () => {
     contrasena: '',
     repetirContrasena: '',
     nombreUsuario: '',
+    tipoUsuario: '',
     aceptoTerminos: false
   });
   const departamentos = [
@@ -102,17 +102,8 @@ const Registro = () => {
 
     if (response.ok) {
       const data = await response.json();
-      try{
-        const carritoResponse= await crearCarrito(formData.numeroDocumento,formData.tipoDocumento);
-        console.log('Carrito creado: ',carritoResponse);
-        if(carritoResponse?.id_carrito){
-          localStorage.setItem('carritoId',carritoResponse.id_carrito.toString());
-        }
-      }catch(error){
-        console.error("Error creando carrito: ",error);
-        alert("No se pudo crear un carrito de compras")
-      }
-      
+      // Guardar tipo de usuario en localStorage
+      localStorage.setItem('userType', formData.tipoUsuario);
       alert('¡Registro exitoso!');
       console.log('Respuesta del servidor:', data);
       navigate('/');
@@ -123,6 +114,7 @@ const Registro = () => {
   } catch (error) {
     alert('Error de red: ' + error.message);
   }
+
 
   };
 
@@ -261,6 +253,20 @@ const Registro = () => {
                       onChange={handleChange}
                       required
                     />
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <label className="form-label fw-semibold text-secondary small mb-1">Tipo de Usuario</label>
+                    <select
+                      className="form-select rounded-pill shadow-sm px-3 py-2"
+                      name="tipoUsuario"
+                      value={formData.tipoUsuario}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="Comprador">Comprador</option>
+                      <option value="Vendedor">Vendedor</option>
+                    </select>
                   </div>
                   <div className="col-12">
                     <div className="form-check mb-2">
