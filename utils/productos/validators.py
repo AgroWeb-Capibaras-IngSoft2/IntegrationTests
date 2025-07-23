@@ -17,7 +17,8 @@ class ResponseValidator:
     URL_PATTERN = re.compile(r'^https?://.*')
     
     # Categorías válidas
-    VALID_CATEGORIES = ["vegetables", "fruits", "dairy", "herbs"]
+    VALID_CATEGORIES = ["Frutas", "Verduras", "Lácteos", "Carnes", "Bebidas", "Tubérculos",
+        "Cereales", "Especias", "Huevos", "Hierbas", "Otros"]
     
     def __init__(self):
         self.errors = []
@@ -316,9 +317,9 @@ class ResponseValidator:
         
         # Métricas esperadas
         expected_metrics = [
-            'agroweb_productos_info',
-            'flask_http_requests_total',
-            'flask_http_request_duration_seconds'
+            'productos_requests_total',
+            'productos_request_duration_seconds',
+            'productos_errors_total'
         ]
         
         for metric in expected_metrics:

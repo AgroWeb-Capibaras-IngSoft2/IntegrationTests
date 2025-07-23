@@ -125,7 +125,7 @@ class TestProductsAPIIntegration:
         """
         # Generar datos de prueba válidos
         product_data = self.test_data.generate_valid_product(
-            category="vegetables",
+            category="vegetales",
             custom_name="Integration Test Papa Criolla"
         )
         
@@ -312,9 +312,9 @@ class TestProductsAPIIntegration:
         
         # Verificar métricas específicas del servicio
         expected_metrics = [
-            'agroweb_productos_info',
-            'flask_http_requests_total',
-            'flask_http_request_duration_seconds'
+            'productos_requests_total',
+            'productos_request_duration_seconds',
+            'productos_errors_total'
         ]
         
         for metric in expected_metrics:
@@ -472,3 +472,21 @@ class TestProductsAPIIntegration:
         self.metrics["concurrent_products_created"] = len(successful_creations)
         self.metrics["concurrent_test_time"] = total_time
         self.metrics["successful_requests"] += len(successful_creations)
+
+    @pytest.mark.api
+    @pytest.mark.integration
+    def test_get_products_by_user(self):
+        """
+        Prueba: Obtener productos por usuario
+        """
+        user_id = "1234567890"
+        # Crear productos para ese usuario
+        product1 = self.test_data.generate_valid_product(user_id=user_id)
+        product2 = self.test_data.generate_valid_product(user_id=user_id)
+        self.api.create_product(product1)
+        self.api.create_product(product2)
+        # Consultar productos por usuario
+        response = self.api.get_products_by_user(user_id)
+        assert response.status_code == 200
+        products = response.json()
+        assert all(p['user_id'] == user_id for p in products)

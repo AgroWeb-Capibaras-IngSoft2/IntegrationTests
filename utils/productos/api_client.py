@@ -75,6 +75,9 @@ class ProductsAPIClient:
         """POST /products - Crear nuevo producto (productId se auto-genera)"""
         return self._make_request('POST', '/products', json=product_data)
     
+    def get_products_by_user(self, user_id):
+        return self._make_request('GET', f"/products/user/{user_id}")
+
     def get_metrics(self) -> requests.Response:
         """GET /metrics - Obtener métricas de Prometheus"""
         # Para métricas, usar headers específicos
@@ -234,9 +237,9 @@ class APITestHelper:
             raise AssertionError("Métricas de Prometheus están vacías")
         
         expected_metrics = [
-            'agroweb_productos_info',
-            'flask_http_requests_total',
-            'flask_http_request_duration_seconds'
+            'productos_requests_total',
+            'productos_request_duration_seconds',
+            'productos_errors_total'
         ]
         
         for metric in expected_metrics:

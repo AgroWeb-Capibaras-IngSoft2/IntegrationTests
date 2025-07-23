@@ -12,26 +12,27 @@ class ProductTestDataGenerator:
     """Generador de datos de prueba para productos AgroWeb"""
     
     # Categorías válidas según la API
-    VALID_CATEGORIES = ["vegetables", "fruits", "dairy", "herbs"]
-    
+    VALID_CATEGORIES = ["Frutas", "Verduras", "Lácteos", "Carnes", "Bebidas", "Tubérculos",
+        "Cereales", "Especias", "Huevos", "Hierbas", "Otros"]
+
     # Categorías inválidas para testing de errores
     INVALID_CATEGORIES = ["invalid_cat", "VEGETABLES", "123", "", None]
     
     # Nombres base para productos por categoría
     PRODUCT_NAMES = {
-        'vegetables': [
+        'vegetales': [
             'Lechuga Crespa', 'Espinaca Baby', 'Apio Fresco', 'Acelga Verde', 
             'Rúgula Orgánica', 'Brócoli', 'Coliflor', 'Zanahoria', 'Cebolla Cabezona'
         ],
-        'fruits': [
+        'frutas': [
             'Mango Tommy', 'Papaya Maradol', 'Banano Bocadillo', 'Piña Gold', 
             'Maracuyá', 'Guayaba Pera', 'Lulo', 'Mora de Castilla', 'Fresa'
         ],
-        'herbs': [
+        'hierbas': [
             'Cilantro', 'Perejil Crespo', 'Albahaca', 'Orégano', 'Tomillo', 
             'Romero', 'Hierbabuena', 'Yerbabuena', 'Cebollín'
         ],
-        'dairy': [
+        'lácteos': [
             'Leche Entera', 'Queso Campesino', 'Yogurt Natural', 'Mantequilla', 
             'Cuajada', 'Queso Doble Crema', 'Kumis', 'Suero Costeño'
         ]
@@ -61,12 +62,14 @@ class ProductTestDataGenerator:
     def __init__(self):
         self.generated_product_names = set()
         self.test_counter = 0
+        self.default_user_id = "1234567890"  # ID de usuario por defecto para pruebas
     
     def generate_valid_product(self, 
                               category: str = None,
                               custom_name: str = None,
                               custom_price: float = None,
-                              custom_stock: int = None) -> Dict[str, Any]:
+                              custom_stock: int = None,
+                              user_id: str = None) -> Dict[str, Any]:
         """Generar producto válido con datos realistas"""
         
         self.test_counter += 1
@@ -103,10 +106,10 @@ class ProductTestDataGenerator:
             price = custom_price
         else:
             price_ranges = {
-                'vegetables': (800, 4000),
-                'fruits': (1200, 6000),
-                'herbs': (500, 2500),
-                'dairy': (2000, 8000)
+                'vegetales': (800, 4000),
+                'frutas': (1200, 6000),
+                'hierbas': (500, 2500),
+                'lácteos': (2000, 8000)
             }
             price_range = price_ranges.get(selected_category, (1000, 5000))
             price = round(random.uniform(price_range[0], price_range[1]), 2)
@@ -136,8 +139,9 @@ class ProductTestDataGenerator:
             "origin": origin,
             "description": f"{description}. {product_name} de excelente calidad.",
             "isActive": True,
+            "user_id": user_id or self.default_user_id,
             # Campos opcionales
-            "originalPrice": round(price * 1.2, 2) if random.choice([True, False]) else None,
+            "originalPrice": min(round(price * 1.2, 2), 999999.99) if random.choice([True, False]) else None,
             "isOrganic": random.choice([True, False]),
             "isBestSeller": random.choice([True, False]),
             "freeShipping": random.choice([True, False])
@@ -147,7 +151,7 @@ class ProductTestDataGenerator:
         """Generar producto con campos faltantes para testing de errores"""
         return {
             "name": "Producto Incompleto Test",
-            "category": "vegetables"
+            "category": "vegetales"
             # Faltan: price, unit, imageUrl, stock, origin, description, isActive
         }
     
@@ -155,28 +159,30 @@ class ProductTestDataGenerator:
         """Generar producto con tipos de datos incorrectos"""
         return {
             "name": "Producto Tipos Incorrectos",
-            "category": "vegetables",
+            "category": "vegetales",
             "price": "precio_no_numerico",  # Debe ser número
             "unit": "1kg",
             "imageUrl": "http://localhost:5000/static/test.jpg",
             "stock": "stock_no_numerico",  # Debe ser entero
             "origin": "Bogotá",
             "description": "Producto con tipos incorrectos",
-            "isActive": "true"  # Debe ser booleano
+            "isActive": "true",  # Debe ser booleano
+            "user_id": self.default_user_id  # Siempre incluir ID de usuario
         }
     
     def generate_invalid_product_negative_values(self) -> Dict[str, Any]:
         """Generar producto con valores negativos"""
         return {
             "name": "Producto Valores Negativos",
-            "category": "vegetables",
+            "category": "vegetales",
             "price": -1500.0,  # Precio negativo
             "unit": "1kg",
             "imageUrl": "http://localhost:5000/static/test.jpg",
             "stock": -10,  # Stock negativo
             "origin": "Bogotá",
             "description": "Producto con valores negativos para testing",
-            "isActive": True
+            "isActive": True,
+            "user_id": self.default_user_id  # Siempre incluir ID de usuario
         }
     
     def generate_invalid_product_invalid_category(self) -> Dict[str, Any]:
@@ -190,7 +196,8 @@ class ProductTestDataGenerator:
             "stock": 50,
             "origin": "Bogotá",
             "description": "Producto con categoría inválida",
-            "isActive": True
+            "isActive": True,
+            "user_id": self.default_user_id  # Siempre incluir ID de usuario
         }
     
     def generate_empty_product(self) -> Dict[str, Any]:
@@ -203,14 +210,15 @@ class ProductTestDataGenerator:
         
         return {
             "name": long_string,
-            "category": "vegetables",
+            "category": "vegetales",
             "price": 2500.0,
             "unit": "1kg",
             "imageUrl": "http://localhost:5000/static/test.jpg",
             "stock": 50,
             "origin": long_string,
             "description": long_string,
-            "isActive": True
+            "isActive": True,
+            "user_id": self.default_user_id  # Siempre incluir ID de usuario
         }
     
     def generate_bulk_products(self, count: int, category: str = None) -> List[Dict[str, Any]]:
@@ -257,7 +265,7 @@ class ProductTestDataGenerator:
             # Producto con todos los campos opcionales como None/False
             {
                 "name": "Producto Minimalista Test",
-                "category": "vegetables",
+                "category": "vegetales",
                 "price": 1000.0,
                 "unit": "1kg",
                 "imageUrl": "http://localhost:5000/static/minimal.jpg",
@@ -265,6 +273,7 @@ class ProductTestDataGenerator:
                 "origin": "Bogotá",
                 "description": "Producto con campos opcionales mínimos",
                 "isActive": True,
+                "user_id": self.default_user_id,  # Siempre incluir ID de usuario
                 "originalPrice": None,
                 "isOrganic": False,
                 "isBestSeller": False,

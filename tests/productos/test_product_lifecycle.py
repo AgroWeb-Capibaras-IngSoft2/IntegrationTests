@@ -34,7 +34,7 @@ class TestProductLifecycle:
         """
         # 1. Crear producto
         product_data = self.test_data.generate_valid_product(
-            category="vegetables",
+            category="vegetales",
             custom_name="Lifecycle Test Papa Criolla Premium",
             custom_stock=150
         )
@@ -137,8 +137,9 @@ class TestProductLifecycle:
             f"Invalid metrics format: {self.validator.get_errors()}"
         
         # Verificar que las métricas reflejan nuestras operaciones
-        assert 'flask_http_requests_total' in metrics_text
-        assert 'agroweb_productos_info' in metrics_text
+        assert 'productos_requests_total' in metrics_text
+        assert 'productos_request_duration_seconds' in metrics_text
+        assert 'productos_errors_total' in metrics_text
         
         self.metrics["successful_requests"] += 1
         
@@ -338,7 +339,7 @@ class TestProductLifecycle:
         num_products = 25
         bulk_products = self.test_data.generate_bulk_products(
             count=num_products,
-            category="vegetables"
+            category="vegetales"
         )
         
         created_ids = []
