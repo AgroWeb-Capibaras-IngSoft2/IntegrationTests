@@ -28,7 +28,7 @@ export default function Login() {
       });
 
       const data = await response.json();
-      console.log(data);
+      console.log('data: ',data);
 
       if (response.ok) {
         // Fetch user data by email to get the username
@@ -45,6 +45,8 @@ export default function Login() {
           }
           //Guardamos el id del carrito
           try{
+            console.log('document:',loginData.user.userdocument);
+            console.log('doctype:',loginData.user.doctype);
             const carritoId= await getCarritoIdByUser(loginData.user.userdocument,loginData.user.doctype);
             localStorage.setItem('carritoId',carritoId);
           }catch(error){
