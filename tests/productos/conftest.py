@@ -34,7 +34,7 @@ MAX_RETRIES = int(os.getenv("MAX_RETRY_ATTEMPTS", "3"))
 SAMPLE_PRODUCTS = [
     {
         "name": "Papa Criolla Integration Test",
-        "category": "vegetables",
+        "category": "vegetales",
         "price": 2500.0,
         "unit": "1kg",
         "imageUrl": "http://localhost:5000/static/catalog/papa_criolla_test.jpg",
@@ -42,13 +42,14 @@ SAMPLE_PRODUCTS = [
         "origin": "Boyacá",
         "description": "Papa criolla fresca para pruebas de integración del sistema",
         "isActive": True,
+        "user_id": "1234567890",
         "isOrganic": True,
         "isBestSeller": False,
         "freeShipping": True
     },
     {
         "name": "Tomate Chonto Integration Test",
-        "category": "vegetables", 
+        "category": "vegetales", 
         "price": 3200.0,
         "unit": "500g",
         "imageUrl": "http://localhost:5000/static/catalog/tomate_test.jpg",
@@ -56,13 +57,14 @@ SAMPLE_PRODUCTS = [
         "origin": "Cundinamarca",
         "description": "Tomate chonto orgánico para testing de integración",
         "isActive": True,
+        "user_id": "1234567890",
         "isOrganic": True,
         "isBestSeller": True,
         "freeShipping": False
     },
     {
         "name": "Mango Tommy Integration Test",
-        "category": "fruits",
+        "category": "frutas",
         "price": 4500.0,
         "unit": "1kg",
         "imageUrl": "http://localhost:5000/static/catalog/mango_test.jpg",
@@ -70,6 +72,7 @@ SAMPLE_PRODUCTS = [
         "origin": "Tolima",
         "description": "Mango Tommy para pruebas de productos sin stock",
         "isActive": True,
+        "user_id": "1234567890",
         "isOrganic": False,
         "isBestSeller": True,
         "freeShipping": True

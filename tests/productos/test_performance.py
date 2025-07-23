@@ -462,6 +462,9 @@ class TestPerformance:
                     f"{op_type} operations too slow in mixed workload: {avg_time:.2f}ms"
         
         total_operations = len(operations)
+        if total_operations == 0:
+            print("No operations were performed during the mixed workload test.")
+            return  # Or raise AssertionError if you want the test to fail
         total_success_rate = sum(1 for op in operations if op['success']) / total_operations
         
         self.metrics["requests_made"] += total_operations
