@@ -96,7 +96,8 @@ const Registro = () => {
         numberDocument: formData.numeroDocumento,
         phoneNumber: formData.telefono,
         hashPassword: formData.contrasena,
-        username: formData.nombreUsuario
+        username: formData.nombreUsuario,
+        userType:formData.tipoUsuario
       })
     });
 
