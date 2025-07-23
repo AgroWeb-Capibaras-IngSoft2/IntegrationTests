@@ -1,0 +1,2 @@
+# Dependencias de Python para generación de reportes PDF
+reportlab>=4.0.0
