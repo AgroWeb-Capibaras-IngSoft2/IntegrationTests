@@ -1,0 +1,15 @@
+# Ignore generated PDF reports
+documentación*.pdf
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore temporary files
+*.tmp
+*.log
