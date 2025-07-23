@@ -54,3 +54,7 @@ prometheus-client>=0.17.1
 black>=23.7.0
 flake8>=6.0.0
 mypy>=1.5.1
+
+# Requirements for running the login integration tests
+selenium==4.15.2
+reportlab==4.0.4
