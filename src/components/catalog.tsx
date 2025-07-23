@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useEffect,
+  useState,
+} from 'react';
 
 import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Icon } from '@iconify/react';
-
-import { CategoryFilter } from './category-filter';
-import { ProductCard } from './product-card';
-
-import { useNavigate } from 'react-router-dom';
 
 // 1. Import fetchProducts and Product type
 import { fetchProducts } from '../data/product';
 import { Product } from '../types/product';
+import { CategoryFilter } from './category-filter';
+import Navbar from './navbar';
+import { ProductCard } from './product-card';
 
 export default function Catalog() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -29,19 +31,23 @@ export default function Catalog() {
 
   const itemsPerPage = 8;
 
-  const userName = localStorage.getItem('userName');
+
+  const userName = localStorage.getItem("userName");
+
 
   // 3. Fetch products from backend
   useEffect(() => {
     setLoading(true);
     fetchProducts()
-      .then(data => {
+      .then((data) => {
         setProducts(data);
         setError(null);
         setLoading(false);
       })
       .catch(() => {
-        setError("No se pudieron cargar los productos. Intenta nuevamente más tarde.");
+        setError(
+          "No se pudieron cargar los productos. Intenta nuevamente más tarde."
+        );
         setLoading(false);
       });
   }, []);
@@ -105,64 +111,8 @@ export default function Catalog() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 shadow-sm bg-opacity-60 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <Icon
-              icon="lucide:sprout"
-              className="text-green-600 text-2xl mr-2"
-            />
-            <span className="font-bold text-xl">Agroweb</span>
-          </div>
 
-          <div className="hidden md:flex space-x-6">
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Home
-            </a>
-            <a
-              href="#"
-              className="text-green-600 font-medium"
-              aria-current="page"
-            >
-              Catalogo
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Acerca de Nosotros
-            </a>
-            <a
-              href="#"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Contacto
-            </a>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <Icon
-                icon="lucide:shopping-cart"
-                className="text-lg text-gray-600"
-              />
-            </button>
-            {userName ? (
-              <span className="hidden md:block text-green-600 underline font-semibold">
-                {userName}
-              </span>
-            ) : (
-              <button className="hidden md:block px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors"
-              onClick={() => navigate('/')}>
-                Iniciar Sesión
-              </button>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar userName={userName} />
 
       {/* Hero Banner */}
       <div className="relative w-full h-64 sm:h-80 overflow-hidden">

@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bgImage from '../assets/paisaje_login.jpg';
 import bcrypt from 'bcryptjs';
+import { getCarritoIdByUser } from '../services/cartservices';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -27,9 +28,11 @@ export default function Login() {
       });
 
       const data = await response.json();
+      console.log('data: ',data);
 
       if (response.ok) {
         // Fetch user data by email to get the username
+        const loginData=data;
         try {
           const userResp = await fetch(`${usersApiUrl}/users/getByEmail/${email}`);
           const userData = await userResp.json();
@@ -39,6 +42,15 @@ export default function Login() {
             localStorage.setItem('userName', userData.user.name);
           } else {
             localStorage.setItem('userName', email);
+          }
+          //Guardamos el id del carrito
+          try{
+            console.log('document:',loginData.user.userdocument);
+            console.log('doctype:',loginData.user.doctype);
+            const carritoId= await getCarritoIdByUser(loginData.user.userdocument,loginData.user.doctype);
+            localStorage.setItem('carritoId',carritoId);
+          }catch(error){
+            console.error('Error obtieniendo carrito:' ,error);
           }
           navigate('/catalog');
         } catch (err) {
