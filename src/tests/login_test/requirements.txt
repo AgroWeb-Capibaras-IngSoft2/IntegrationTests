@@ -1,0 +1,3 @@
+# Requirements for running the login integration tests
+selenium==4.15.2
+reportlab==4.0.4
